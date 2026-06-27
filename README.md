@@ -2,7 +2,9 @@
 
 A responsive front-end web application for browsing, searching, and booking PG (paying guest) accommodation. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no backend, fully client-side.
 
-🔗 **Live Demo:** _(add your deployed link here after hosting on Netlify/GitHub Pages)_
+🔗 **Live Demo:** https://shestay-sonal.netlify.app
+📁 **GitHub:** https://github.com/sonal-patil04/shestay-girls-hostel
+
 
 ## Features
 
