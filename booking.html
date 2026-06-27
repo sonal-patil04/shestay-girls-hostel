@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Bed | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: linear-gradient(135deg, #fdf4ff, #fce7f3); min-height:100vh; }
+    .steps-bar { display:flex; max-width:700px; margin:0 auto 28px; background:white; border-radius:50px; padding:8px; box-shadow:0 4px 20px rgba(124,58,237,0.1); }
+    .step-item { flex:1; text-align:center; padding:10px 6px; border-radius:40px; font-size:12px; font-weight:500; color:#94a3b8; transition:0.3s; }
+    .step-item.active { background:#7c3aed; color:white; }
+    .step-item.done   { color:#22c55e; }
+    .booking-wrapper  { max-width:980px; margin:0 auto; padding:28px 20px 60px; }
+    .booking-page-title { text-align:center; margin-bottom:28px; }
+    .booking-page-title h1 { font-size:26px; color:#0f172a; }
+    .booking-page-title p  { color:#64748b; font-size:13px; margin-top:6px; }
+    .bk-card { background:white; border-radius:16px; padding:26px; box-shadow:0 4px 24px rgba(124,58,237,0.09); border:1px solid #f3e8ff; }
+    .bk-card-title { font-size:15px; font-weight:600; color:#0f172a; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f5f3ff; }
+    .ladies-notice { background:#fdf4ff; border:1.5px solid #e9d5ff; border-radius:10px; padding:10px 16px; font-size:12px; color:#7c3aed; font-weight:600; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+    /* Room type cards */
+    .room-type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .room-type-card { border:2px solid #f3e8ff; border-radius:14px; padding:18px 14px; text-align:center; cursor:pointer; transition:0.2s; position:relative; }
+    .room-type-card:hover { border-color:#c4b5fd; transform:translateY(-3px); }
+    .room-type-card.selected { border-color:#7c3aed; background:#fdf4ff; }
+    .room-type-card.popular { border-color:#f43f5e; background:linear-gradient(135deg,#fff1f2,#fce7f3); }
+    .popular-badge { position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#f43f5e; color:white; font-size:10px; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; }
+    .room-type-icon { font-size:32px; margin-bottom:7px; }
+    .room-type-name { font-size:13px; font-weight:600; color:#0f172a; }
+    .room-type-price { font-size:17px; font-weight:700; color:#7c3aed; margin:5px 0; }
+    .room-type-price.rose { color:#f43f5e; }
+    .room-type-avail { font-size:11px; color:#64748b; }
+    /* Bed layout */
+    .bed-layout-wrap { display:grid; grid-template-columns:1fr 270px; gap:18px; }
+    .bed-legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
+    .legend-item { display:flex; align-items:center; gap:7px; font-size:12px; color:#64748b; }
+    .legend-dot { width:20px; height:20px; border-radius:5px; border:2px solid; }
+    .legend-dot.available { background:#dcfce7; border-color:#22c55e; }
+    .legend-dot.occupied  { background:#fee2e2; border-color:#ef4444; }
+    .legend-dot.selected  { background:#7c3aed; border-color:#6d28d9; }
+    .floor-section { margin-bottom:22px; }
+    .floor-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#94a3b8; margin-bottom:10px; }
+    .room-box { border:2px dashed #e9d5ff; border-radius:12px; padding:18px; background:#fdf4ff; position:relative; }
+    .room-box-label { position:absolute; top:-10px; left:14px; background:#fdf4ff; padding:0 8px; font-size:10px; color:#94a3b8; font-weight:700; }
+    .beds-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .bed-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
+    .bed-visual { width:68px; height:78px; border-radius:10px; border:2px solid; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; transition:0.2s; }
+    .bed-visual:hover { transform:scale(1.08); }
+    .bed-visual.available { background:#dcfce7; border-color:#22c55e; }
+    .bed-visual.occupied  { background:#fee2e2; border-color:#ef4444; cursor:not-allowed; }
+    .bed-visual.selected  { background:#7c3aed; border-color:#6d28d9; color:white; }
+    .bed-icon { font-size:24px; line-height:1; }
+    .bed-id   { font-size:10px; font-weight:700; }
+    .pillow-row { display:flex; gap:4px; }
+    .pillow { width:9px; height:7px; border-radius:3px; background:rgba(255,255,255,0.7); border:1px solid rgba(0,0,0,0.08); }
+    .bed-visual.selected .pillow { background:rgba(255,255,255,0.3); }
+    .bed-label { font-size:10px; font-weight:600; color:#475569; text-align:center; }
+    .bed-label.sel { color:#6d28d9; }
+    /* Summary sidebar */
+    .summary-box { background:#fdf4ff; border-radius:14px; padding:18px; border:1px solid #e9d5ff; position:sticky; top:90px; }
+    .summary-title { font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; }
+    .summary-row { display:flex; justify-content:space-between; font-size:12px; color:#64748b; padding:6px 0; border-bottom:1px solid #f3e8ff; }
+    .summary-row:last-of-type { border-bottom:none; }
+    .summary-val { font-weight:600; color:#0f172a; }
+    .summary-total { display:flex; justify-content:space-between; font-size:15px; font-weight:700; padding-top:12px; margin-top:8px; border-top:2px solid #e9d5ff; }
+    .summary-total span:last-child { color:#7c3aed; }
+    /* Forms */
+    .form-2col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-group label { font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em; }
+    .form-group input, .form-group select { padding:11px 13px; border:1.5px solid #e9d5ff; border-radius:8px; font-size:13px; font-family:'Poppins',sans-serif; transition:0.2s; }
+    .form-group input:focus, .form-group select:focus { outline:none; border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+    .form-full { grid-column:1 / -1; }
+    .form-section-divider { grid-column:1 / -1; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#94a3b8; padding-top:6px; border-top:1px solid #f3e8ff; }
+    /* Nav buttons */
+    .btn-row { display:flex; gap:10px; margin-top:22px; }
+    .btn-back { padding:12px 22px; background:white; border:1.5px solid #e9d5ff; border-radius:8px; font-size:13px; font-weight:500; color:#475569; cursor:pointer; transition:0.2s; font-family:'Poppins',sans-serif; }
+    .btn-back:hover { border-color:#c4b5fd; }
+    .btn-next { flex:1; padding:13px; background:#7c3aed; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:0.2s; font-family:'Poppins',sans-serif; }
+    .btn-next:hover { background:#6d28d9; transform:translateY(-1px); }
+    .btn-next:disabled { background:#e9d5ff; color:#a78bfa; cursor:not-allowed; transform:none; }
+    /* Confirm */
+    .confirm-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .confirm-block { background:#fdf4ff; border-radius:12px; padding:16px; border:1px solid #f3e8ff; }
+    .confirm-block h3 { font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px; }
+    .confirm-row { display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px solid #f3e8ff; }
+    .confirm-row:last-child { border-bottom:none; }
+    .confirm-row span:first-child { color:#64748b; }
+    .confirm-row span:last-child { font-weight:600; color:#0f172a; }
+    .btn-confirm { width:100%; padding:14px; background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; margin-top:18px; font-family:'Poppins',sans-serif; transition:0.2s; }
+    .btn-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(124,58,237,0.3); }
+    .success-screen { text-align:center; padding:36px 20px; }
+    .success-screen .tick { font-size:64px; }
+    .booking-ref { display:inline-block; background:#f5f3ff; border:1.5px solid #c4b5fd; border-radius:10px; padding:12px 28px; font-size:18px; font-weight:700; color:#6d28d9; letter-spacing:0.1em; margin-bottom:24px; }
+    @media(max-width:700px) { .room-type-grid,.bed-layout-wrap,.form-2col,.confirm-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="security-ticker">
+    🔒 Women-only booking · All beds reserved for female residents only
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <div class="booking-wrapper">
+    <div class="booking-page-title">
+      <h1>🌸 Book Your Bed at SheStay</h1>
+      <p>Women-only · Verified · Secure · All beds reserved for female residents</p>
+    </div>
+
+    <div class="steps-bar">
+      <div class="step-item active" id="step-1">1. Room Type</div>
+      <div class="step-item"        id="step-2">2. Pick a Bed</div>
+      <div class="step-item"        id="step-3">3. Your Details</div>
+      <div class="step-item"        id="step-4">4. Confirm</div>
+    </div>
+
+    <div id="step-content"></div>
+  </div>
+
+  <script>
+  const ROOMS = {
+    single: {
+      name:"Single Sharing", icon:"🛏️", price:6000, popular:false,
+      perks:"Private space • Study table\nWardrobe • Attached washroom",
+      floors:[{
+        label:"Room A — Ladies Only 👩",
+        beds:[
+          {id:"A1",status:"occupied"},{id:"A2",status:"available"},
+          {id:"A3",status:"available"},{id:"A4",status:"occupied"}
+        ]
+      }]
+    },
+    double: {
+      name:"Double Sharing", icon:"🛏️🛏️", price:4500, popular:true,
+      perks:"Most spacious • AC included\nBalcony access • Best value",
+      floors:[
+        {label:"Room B — Floor 1 · Ladies Only 👩",
+         beds:[{id:"B1",status:"occupied"},{id:"B2",status:"available"},{id:"B3",status:"available"},
+               {id:"B4",status:"occupied"},{id:"B5",status:"available"},{id:"B6",status:"available"}]},
+        {label:"Room B — Floor 2 · Ladies Only 👩",
+         beds:[{id:"B7",status:"available"},{id:"B8",status:"occupied"},{id:"B9",status:"available"},
+               {id:"B10",status:"available"},{id:"B11",status:"occupied"},{id:"B12",status:"available"}]}
+      ]
+    },
+    triple: {
+      name:"Triple Sharing", icon:"🛏️🛏️🛏️", price:3500, popular:false,
+      perks:"Budget friendly • Common lounge\nHigh-speed WiFi • Food included",
+      floors:[{
+        label:"Room C — Ladies Only 👩",
+        beds:[
+          {id:"C1",status:"available"},{id:"C2",status:"occupied"},{id:"C3",status:"available"},
+          {id:"C4",status:"available"},{id:"C5",status:"occupied"},{id:"C6",status:"available"},
+          {id:"C7",status:"available"},{id:"C8",status:"occupied"},{id:"C9",status:"available"}
+        ]
+      }]
+    }
+  };
+
+  const state = { step:1, roomKey:null, selectedBed:null, form:{name:"",email:"",phone:"",guardianName:"",guardianPhone:"",moveIn:"",duration:"3 Months"} };
+
+  function goTo(n) {
+    state.step = n;
+    [1,2,3,4].forEach(i => {
+      const el = document.getElementById("step-"+i);
+      el.className = "step-item"+(i===n?" active":i<n?" done":"");
+    });
+    render();
+    window.scrollTo({top:120,behavior:"smooth"});
+  }
+
+  function render() {
+    const c = document.getElementById("step-content");
+    if(state.step===1) c.innerHTML = renderStep1();
+    if(state.step===2) c.innerHTML = renderStep2();
+    if(state.step===3) c.innerHTML = renderStep3();
+    if(state.step===4) c.innerHTML = renderStep4();
+    bindEvents();
+  }
+
+  function renderStep1() {
+    const cards = Object.entries(ROOMS).map(([k,r])=>{
+      const allBeds = r.floors.flatMap(f=>f.beds);
+      const free = allBeds.filter(b=>b.status==="available").length;
+      const isSel = state.roomKey===k;
+      return `<div class="room-type-card ${r.popular?"popular":""} ${isSel?"selected":""}" data-key="${k}">
+        ${r.popular?`<div class="popular-badge">💕 Most Loved</div>`:""}
+        <div class="room-type-icon">${r.icon}</div>
+        <div class="room-type-name">${r.name}</div>
+        <div class="room-type-price ${r.popular?"rose":""}">₹${r.price.toLocaleString()}<span style="font-size:11px;font-weight:400;">/mo</span></div>
+        <div class="room-type-avail">🟢 ${free} beds free</div>
+      </div>`;
+    }).join("");
+    return `<div class="bk-card">
+      <div class="bk-card-title">Step 1 — Select your room type</div>
+      <div class="ladies-notice">👩 All rooms are exclusively reserved for female residents</div>
+      <div class="room-type-grid">${cards}</div>
+      <div class="btn-row">
+        <button class="btn-next" id="btn-to2" ${!state.roomKey?"disabled":""}>Choose Your Bed →</button>
+      </div>
+    </div>`;
+  }
+
+  function renderStep2() {
+    const room = ROOMS[state.roomKey];
+    const allBeds = room.floors.flatMap(f=>f.beds);
+    const avail = allBeds.filter(b=>b.status==="available").length;
+    const occ   = allBeds.filter(b=>b.status==="occupied").length;
+    const floorsHtml = room.floors.map(floor=>{
+      const items = floor.beds.map(bed=>{
+        const isSel = state.selectedBed && state.selectedBed.id===bed.id;
+        const cls = isSel?"selected":bed.status;
+        const clickable = bed.status!=="occupied";
+        const icon = bed.status==="occupied"?"🔒":"🛏️";
+        return `<div class="bed-item" ${clickable?`data-bedid="${bed.id}" data-bedstatus="${bed.status}"`:""}> 
+          <div class="bed-visual ${cls}" ${clickable?`data-bedid="${bed.id}"`:""}>
+            <div class="bed-icon">${isSel?"✅":icon}</div>
+            ${isSel?"":`<div class="pillow-row"><div class="pillow"></div><div class="pillow"></div></div>`}
+            <div class="bed-id">${bed.id}</div>
+          </div>
+          <div class="bed-label ${isSel?"sel":""}">${isSel?"✓ Selected":bed.status==="occupied"?"Occupied":"Available"}</div>
+        </div>`;
+      }).join("");
+      return `<div class="floor-section">
+        <div class="floor-label">${floor.label}</div>
+        <div class="room-box"><span class="room-box-label">Room layout</span>
+          <div class="beds-row">${items}</div>
+        </div>
+      </div>`;
+    }).join("");
+    const sel = state.selectedBed;
+    return `<div class="bed-layout-wrap">
+      <div class="bk-card">
+        <div class="bk-card-title">Step 2 — Pick your bed
+          <span style="float:right;font-size:11px;color:#94a3b8;font-weight:400;">${room.name} · ₹${room.price.toLocaleString()}/mo</span>
+        </div>
+        <div class="ladies-notice">👩 All beds are for female residents only · No male visitors in room areas</div>
+        <div class="bed-legend">
+          <div class="legend-item"><div class="legend-dot available"></div> Available (${avail})</div>
+          <div class="legend-item"><div class="legend-dot occupied"></div> Occupied (${occ})</div>
+          <div class="legend-item"><div class="legend-dot selected"></div> Your pick</div>
+        </div>
+        ${floorsHtml}
+        <div class="btn-row">
+          <button class="btn-back" id="btn-back1">← Back</button>
+          <button class="btn-next" id="btn-to3" ${!sel?"disabled":""}>Enter Details →</button>
+        </div>
+      </div>
+      <div>
+        <div class="summary-box">
+          <div class="summary-title">📋 Booking Summary</div>
+          <div class="summary-row"><span>Room</span><span class="summary-val">${room.name}</span></div>
+          <div class="summary-row"><span>Bed no.</span><span class="summary-val">${sel?sel.id:"—"}</span></div>
+          <div class="summary-row"><span>Rent/month</span><span class="summary-val">₹${room.price.toLocaleString()}</span></div>
+          <div class="summary-total"><span>Monthly rent</span><span>₹${room.price.toLocaleString()}</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderStep3() {
+    const f = state.form;
+    const room = ROOMS[state.roomKey];
+    return `<div class="bed-layout-wrap">
+      <div class="bk-card">
+        <div class="bk-card-title">Step 3 — Enter your details</div>
+        <div class="form-2col">
+          <div class="form-group form-full"><div class="form-section-divider">Your Information</div></div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="inp-name" value="${f.name}" placeholder="As on your ID" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="inp-email" value="${f.email}" placeholder="you@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="inp-phone" value="${f.phone}" placeholder="+91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label>Move-in Date</label>
+            <input type="date" id="inp-movein" value="${f.moveIn}" required>
+          </div>
+          <div class="form-group form-full">
+            <label>Duration of Stay</label>
+            <select id="inp-duration">
+              <option ${f.duration==="1 Month"?"selected":""}>1 Month</option>
+              <option ${f.duration==="3 Months"?"selected":""}>3 Months</option>
+              <option ${f.duration==="6 Months"?"selected":""}>6 Months</option>
+              <option ${f.duration==="12 Months"?"selected":""}>12 Months</option>
+            </select>
+          </div>
+          <div class="form-group form-full"><div class="form-section-divider">Emergency Contact (Parent / Guardian)</div></div>
+          <div class="form-group">
+            <label>Guardian Name</label>
+            <input type="text" id="inp-guardian-name" value="${f.guardianName}" placeholder="Mother / Father name" required>
+          </div>
+          <div class="form-group">
+            <label>Guardian Phone</label>
+            <input type="tel" id="inp-guardian-phone" value="${f.guardianPhone}" placeholder="+91 98765 XXXXX" required>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-back" id="btn-back2">← Back</button>
+          <button class="btn-next" id="btn-to4">Review Booking →</button>
+        </div>
+      </div>
+      <div>
+        <div class="summary-box">
+          <div class="summary-title">📋 Your Selection</div>
+          <div class="summary-row"><span>Room</span><span class="summary-val">${room.name}</span></div>
+          <div class="summary-row"><span>Bed</span><span class="summary-val">${state.selectedBed?state.selectedBed.id:"—"}</span></div>
+          <div class="summary-row"><span>Rent/month</span><span class="summary-val">₹${room.price.toLocaleString()}</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderStep4() {
+    const room = ROOMS[state.roomKey];
+    const f = state.form;
+    const months = parseInt(f.duration)||3;
+    const total = room.price * months;
+    return `<div class="bk-card">
+      <div class="bk-card-title">Step 4 — Review & Confirm</div>
+      <div class="confirm-grid">
+        <div class="confirm-block">
+          <h3>Room Details</h3>
+          <div class="confirm-row"><span>Type</span><span>${room.name}</span></div>
+          <div class="confirm-row"><span>Bed no.</span><span>${state.selectedBed.id}</span></div>
+          <div class="confirm-row"><span>Rent</span><span>₹${room.price.toLocaleString()}/mo</span></div>
+          <div class="confirm-row"><span>Duration</span><span>${f.duration}</span></div>
+          <div class="confirm-row"><span>Move-in</span><span>${f.moveIn||"—"}</span></div>
+          <div class="confirm-row" style="border-top:2px solid #e9d5ff;margin-top:6px;padding-top:10px;">
+            <span><b>Total</b></span><span style="color:#7c3aed;"><b>₹${total.toLocaleString()}</b></span>
+          </div>
+        </div>
+        <div class="confirm-block">
+          <h3>Your Details</h3>
+          <div class="confirm-row"><span>Name</span><span>${f.name}</span></div>
+          <div class="confirm-row"><span>Email</span><span style="font-size:11px;">${f.email}</span></div>
+          <div class="confirm-row"><span>Phone</span><span>${f.phone}</span></div>
+          <div class="confirm-row"><span>Guardian</span><span>${f.guardianName}</span></div>
+          <div class="confirm-row"><span>Guardian Ph.</span><span>${f.guardianPhone}</span></div>
+        </div>
+      </div>
+      <div style="background:#fdf4ff;border-radius:10px;padding:13px 16px;margin-top:18px;font-size:12px;color:#7c3aed;border:1px solid #e9d5ff;">
+        🔒 By confirming, you agree to SheStay's safety rules, visitor policy, and gate timings. Our female warden will call within 24 hours to complete your ID verification.
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" id="btn-back3">← Edit</button>
+        <button class="btn-confirm" id="btn-confirm">✅ Confirm Booking</button>
+      </div>
+    </div>`;
+  }
+
+  function showSuccess() {
+    const refNo = "SS"+Math.floor(Math.random()*90000+10000);
+    const room = ROOMS[state.roomKey];
+    const bookings = JSON.parse(localStorage.getItem("pgBookings")||"[]");
+    bookings.push({ ref:refNo, room:room.name, bed:state.selectedBed.id, ...state.form, bookedOn:new Date().toLocaleString() });
+    localStorage.setItem("pgBookings", JSON.stringify(bookings));
+    [1,2,3,4].forEach(i=>document.getElementById("step-"+i).className="step-item done");
+    document.getElementById("step-content").innerHTML = `<div class="bk-card">
+      <div class="success-screen">
+        <div class="tick">🌸</div>
+        <h2 style="margin:14px 0 8px;font-size:22px;color:#7c3aed;">Welcome to SheStay!</h2>
+        <p style="color:#64748b;font-size:13px;max-width:380px;margin:0 auto 20px;">
+          Your bed <b>${state.selectedBed.id}</b> is reserved. Our warden Mrs. Sunita will call <b>${state.form.phone}</b> within 24 hours for ID verification.
+        </p>
+        <div class="booking-ref">${refNo}</div>
+        <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:12px;padding:14px;max-width:300px;margin:0 auto 24px;font-size:12px;color:#9f1239;line-height:1.8;">
+          🚨 Save this: Warden <a href="tel:+919876543210" style="color:#f43f5e;font-weight:700;">+91 98765 43210</a><br>
+          Women Helpline: <a href="tel:1091" style="color:#f43f5e;font-weight:700;">1091</a>
+        </div>
+        <a href="index.html"><button class="btn-next" style="max-width:200px;margin:auto;display:block;">Back to Home 🌸</button></a>
+      </div>
+    </div>`;
+  }
+
+  function bindEvents() {
+    document.querySelectorAll(".room-type-card").forEach(c=>{
+      c.onclick=()=>{ state.roomKey=c.dataset.key; state.selectedBed=null; render(); };
+    });
+    const t2=document.getElementById("btn-to2"); if(t2) t2.onclick=()=>goTo(2);
+    document.querySelectorAll(".bed-visual[data-bedid]").forEach(el=>{
+      el.onclick=()=>{
+        const id=el.dataset.bedid;
+        const all=ROOMS[state.roomKey].floors.flatMap(f=>f.beds);
+        state.selectedBed=all.find(b=>b.id===id);
+        render();
+      };
+    });
+    const b1=document.getElementById("btn-back1"); if(b1) b1.onclick=()=>goTo(1);
+    const t3=document.getElementById("btn-to3"); if(t3) t3.onclick=()=>goTo(3);
+    const b2=document.getElementById("btn-back2"); if(b2) b2.onclick=()=>goTo(2);
+    const t4=document.getElementById("btn-to4"); if(t4) t4.onclick=()=>{
+      const name=document.getElementById("inp-name").value.trim();
+      const email=document.getElementById("inp-email").value.trim();
+      const phone=document.getElementById("inp-phone").value.trim();
+      const gName=document.getElementById("inp-guardian-name").value.trim();
+      const gPhone=document.getElementById("inp-guardian-phone").value.trim();
+      const moveIn=document.getElementById("inp-movein").value;
+      const duration=document.getElementById("inp-duration").value;
+      if(!name||!email||!phone||!gName||!gPhone){ alert("Please fill all fields including emergency contact."); return; }
+      state.form={name,email,phone,guardianName:gName,guardianPhone:gPhone,moveIn,duration};
+      goTo(4);
+    };
+    const b3=document.getElementById("btn-back3"); if(b3) b3.onclick=()=>goTo(3);
+    const cf=document.getElementById("btn-confirm"); if(cf) cf.onclick=()=>showSuccess();
+  }
+
+  render();
+  const pre=new URLSearchParams(window.location.search).get("room");
+  if(pre&&ROOMS[pre]){ state.roomKey=pre; render(); }
+  </script>
+</body>
+</html>

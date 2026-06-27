@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="security-ticker">
+    🔒 Women-only registration — ID verification required after submission
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <section class="auth-container" style="max-width:480px;">
+    <div style="font-size:40px;margin-bottom:10px;">🌸</div>
+    <h2>Create Account</h2>
+    <p class="auth-subtitle">Join the SheStay community — verified women only</p>
+
+    <form class="auth-form" id="registerForm">
+
+      <p class="auth-section-label">Personal Details</p>
+      <input type="text"  id="regName"  placeholder="Full Name (as on ID)" required>
+      <input type="email" id="regEmail" placeholder="Email Address" required>
+      <input type="tel"   id="regPhone" placeholder="Phone Number" required>
+
+      <p class="auth-section-label" style="margin-top:8px;">Emergency Contact (Parent / Guardian)</p>
+      <input type="text"  id="regGuardianName"  placeholder="Guardian Name" required>
+      <input type="tel"   id="regGuardianPhone" placeholder="Guardian Phone Number" required>
+      <select id="regRelation" style="padding:12px 14px;border:1.5px solid #e9d5ff;border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;">
+        <option value="">Relation with guardian</option>
+        <option>Mother</option>
+        <option>Father</option>
+        <option>Sibling</option>
+        <option>Relative</option>
+      </select>
+
+      <p class="auth-section-label" style="margin-top:8px;">Set Password</p>
+      <input type="password" id="regPassword"        placeholder="Create Password" required>
+      <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+
+      <label style="display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#64748b;text-align:left;margin-top:6px;cursor:pointer;">
+        <input type="checkbox" id="regConsent" required style="width:16px;height:16px;margin-top:2px;flex-shrink:0;">
+        I confirm I am female and agree to SheStay's safety rules, visitor policy, and gate timings.
+      </label>
+
+      <p class="error-text" id="registerError"></p>
+      <button type="submit" class="btn" style="margin-top:4px;">Create My Account →</button>
+    </form>
+
+    <p style="margin-top:16px;font-size:13px;color:#64748b;">
+      Already registered? <a href="login.html" style="color:#7c3aed;font-weight:600;">Login here</a>
+    </p>
+    <p style="margin-top:8px;font-size:11px;color:#94a3b8;">
+      🔒 Your data is kept private and never shared. ID verification done by our female warden within 24 hours.
+    </p>
+  </section>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

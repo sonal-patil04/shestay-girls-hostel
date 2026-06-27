@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="security-ticker">
+    🔒 Resident portal — for verified SheStay residents only
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <section class="auth-container">
+    <div style="font-size:40px;margin-bottom:10px;">🌸</div>
+    <h2>Welcome Back</h2>
+    <p class="auth-subtitle">Sign in to your SheStay resident account</p>
+
+    <form class="auth-form" id="loginForm">
+      <p class="auth-section-label">Your credentials</p>
+      <input type="email" id="loginEmail" placeholder="Registered email address" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <p class="error-text" id="loginError"></p>
+      <button type="submit" class="btn" style="margin-top:4px;">Login →</button>
+    </form>
+
+    <p style="margin-top:18px;font-size:13px;color:#64748b;">
+      New to SheStay? <a href="register.html" style="color:#7c3aed;font-weight:600;">Create account</a>
+    </p>
+    <p style="margin-top:8px;font-size:12px;color:#94a3b8;">
+      🔒 This portal is for registered women residents only.
+    </p>
+  </section>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

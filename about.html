@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .about-hero {
+      background: linear-gradient(135deg, #7c3aed, #4c1d95);
+      color: white;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .about-hero h1 { font-size: 36px; margin-bottom: 12px; }
+    .about-hero p { font-size: 15px; opacity: 0.88; max-width: 600px; margin: auto; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      max-width: 1000px;
+      margin: 40px auto 0;
+    }
+    .about-card {
+      background: white;
+      border-radius: 16px;
+      padding: 26px 22px;
+      box-shadow: 0 4px 18px rgba(124,58,237,0.09);
+      border: 1px solid #f3e8ff;
+    }
+    .about-card .icon { font-size: 32px; margin-bottom: 12px; }
+    .about-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+    .about-card p  { font-size: 13px; color: #64748b; line-height: 1.7; }
+
+    .vision-strip {
+      background: linear-gradient(135deg, #fdf4ff, #f5f3ff);
+      padding: 50px 20px;
+      text-align: center;
+    }
+    .vision-strip blockquote {
+      max-width: 640px;
+      margin: auto;
+      font-size: 20px;
+      font-weight: 600;
+      color: #7c3aed;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .vision-strip cite { display: block; font-size: 13px; color: #94a3b8; margin-top: 14px; font-style: normal; }
+
+    .rules-section { max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+    .rules-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: #0f172a; text-align:center; }
+    .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .rule-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid #f3e8ff;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .rule-item .ri { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    @media(max-width:600px) { .rules-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="security-ticker">
+    🔒 Women-only verified hostel · 24x7 CCTV · Female warden on premises ·
+    <a href="tel:+919876543210">Emergency: +91 9876543210</a>
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="facilities.html">Facilities</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <div class="about-hero">
+    <h1>About SheStay 🌸</h1>
+    <p>A safe, verified, women-only hostel built on one belief — every woman deserves a home she feels truly secure in.</p>
+  </div>
+
+  <section class="section">
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>To provide safe, comfortable, and affordable accommodation exclusively for women — where every resident feels protected, respected, and at home.</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🛡️</div>
+        <h3>Security First</h3>
+        <p>We don't treat security as a feature — it's the foundation. Biometric entry, 24x7 CCTV, female-only staff, and a panic button in every room.</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">👩‍👩‍👧</div>
+        <h3>Community</h3>
+        <p>We've built a thriving community of students and working professionals who support each other. You're never alone at SheStay.</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">📅</div>
+        <h3>8 Years of Trust</h3>
+        <p>Since 2018, 300+ women have called SheStay home. Our 4.9/5 safety rating comes directly from resident reviews — not a marketing claim.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="vision-strip">
+    <blockquote>
+      "We started SheStay because we couldn't find a hostel where we felt truly safe.
+       Now 300+ women don't have to face that problem."
+    </blockquote>
+    <cite>— Sunita Desai, Founder & Chief Warden, SheStay</cite>
+  </div>
+
+  <section class="section">
+    <div class="rules-section">
+      <h2>🏠 Hostel Rules & Safety Policy</h2>
+      <div class="rules-grid">
+        <div class="rule-item"><span class="ri">🚪</span> Main gate closes at 10:30 PM. Late entry only with prior warden approval.</div>
+        <div class="rule-item"><span class="ri">👥</span> Male visitors are not permitted beyond the lobby. Lobby visits between 10 AM–7 PM only.</div>
+        <div class="rule-item"><span class="ri">📋</span> All visitors must submit valid photo ID at the security desk before entry.</div>
+        <div class="rule-item"><span class="ri">🚬</span> Smoking, alcohol and drugs are strictly prohibited on the premises.</div>
+        <div class="rule-item"><span class="ri">📹</span> CCTV footage is reviewed daily. Any suspicious activity is reported immediately.</div>
+        <div class="rule-item"><span class="ri">🚨</span> Emergency contacts and panic button locations are displayed in every room and corridor.</div>
+        <div class="rule-item"><span class="ri">📱</span> Parents can register for the daily safety check-in SMS service at the front desk.</div>
+        <div class="rule-item"><span class="ri">🌙</span> Night warden does room rounds at 11 PM and 3 AM for safety verification.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <h2>SheStay 🌸</h2>
+    <p>Safe · Comfortable · Women Only</p>
+    <p class="emergency-line">🚨 Emergency: +91 9876543210 (24x7)</p>
+    <p>SheStay Girls Hostel &copy; 2026</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

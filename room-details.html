@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Details | PG Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ---- 360 VIEWER ---- */
+    .viewer-section {
+      max-width: 1000px;
+      margin: 40px auto 0;
+      padding: 0 20px;
+    }
+    .viewer-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    .viewer-label span {
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .viewer-container {
+      position: relative;
+      width: 100%;
+      height: 360px;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border: 1px solid #e2e8f0;
+    }
+    .viewer-container:active { cursor: grabbing; }
+
+    .panorama-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      display: flex;
+      transition: transform 0.05s linear;
+    }
+
+    /* Each "wall" panel in the panorama */
+    .wall-panel {
+      flex-shrink: 0;
+      width: 700px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floor + ceiling in each panel */
+    .wall-panel::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 28%;
+      z-index: 1;
+    }
+    .wall-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 18%;
+      z-index: 1;
+    }
+
+    /* Seam line between panels (like a corner of a room) */
+    .wall-seam {
+      flex-shrink: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(to right, rgba(0,0,0,0.25), rgba(0,0,0,0.05));
+    }
+
+    /* HUD overlays */
+    .viewer-hint {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.55);
+      color: white;
+      font-size: 12px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      z-index: 50;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    .degree-badge {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      z-index: 50;
+    }
+    .viewer-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: #2563eb;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      z-index: 50;
+    }
+
+    /* Hotspot labels inside the room */
+    .hotspot {
+      position: absolute;
+      z-index: 20;
+      cursor: pointer;
+    }
+    .hotspot-dot {
+      width: 12px;
+      height: 12px;
+      background: #f59e0b;
+      border: 2px solid white;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    .hotspot-label {
+      position: absolute;
+      left: 18px;
+      top: -4px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.7); }
+      50%      { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+    }
+
+    /* ---- Furniture drawing helpers ---- */
+    .furn { position: absolute; }
+
+    /* ---- DOUBLE ROOM SPECIAL STYLING ---- */
+    .popular-room-banner {
+      background: linear-gradient(135deg, #fef3c7, #fffbeb);
+      border: 2px solid #f59e0b;
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 20px 0;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .popular-room-banner .big-star { font-size: 36px; }
+    .popular-room-banner h3 { font-size: 15px; font-weight: 700; color: #92400e; margin-bottom: 4px; }
+    .popular-room-banner p { font-size: 13px; color: #78350f; }
+    .popular-perks { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .popular-perk-tag {
+      background: #fde68a;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ---- ROOM INFO LAYOUT ---- */
+    .room-container {
+      max-width: 1000px;
+      margin: 30px auto;
+      display: flex;
+      gap: 24px;
+      padding: 0 20px;
+      flex-wrap: wrap;
+    }
+    .room-info { flex: 2; min-width: 280px; }
+    .booking-sidebar {
+      flex: 1;
+      min-width: 240px;
+      background: white;
+      padding: 26px;
+      border-radius: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.09);
+    }
+    .booking-sidebar h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #0f172a; }
+    .sidebar-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    .sidebar-row span:last-child { font-weight: 600; color: #0f172a; }
+    .sidebar-row:last-of-type { border-bottom: none; }
+
+    .details-card {
+      background: white;
+      padding: 22px;
+      margin-top: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    }
+    .details-card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #0f172a; }
+
+    .facility-tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+    .facility-tags span {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .available-tag {
+      display: inline-block;
+      background: #dcfce7;
+      color: #15803d;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      margin: 12px 0;
+    }
+
+    .review-card {
+      background: #f8fafc;
+      padding: 18px;
+      margin-top: 14px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+    }
+    .review-card h3 { color: #f59e0b; margin-bottom: 6px; }
+    .review-card p { font-size: 13px; color: #475569; }
+    .reviews { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
+    .reviews h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+
+    @media(max-width:700px) {
+      .room-container { flex-direction: column; }
+      .booking-sidebar { position: static; }
+      .wall-panel { width: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">PG Finder</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="facilities.html">Facilities</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="room-hero" id="roomHero">
+    <div class="hero-content">
+      <h1 id="roomTitle">Room Details</h1>
+      <p>Comfortable • Secure • Affordable</p>
+      <span class="price-tag" id="roomPriceTag">₹0 / Month</span>
+    </div>
+  </section>
+
+  <!-- Popular room banner (only shown for double) -->
+  <div id="popularBanner" style="display:none; padding:0 20px;">
+    <div class="popular-room-banner">
+      <div class="big-star">⭐</div>
+      <div>
+        <h3>Most Loved Room at PG Finder</h3>
+        <p>500+ residents chose Double Sharing — the perfect balance of space, privacy, and price.</p>
+        <div class="popular-perks">
+          <span class="popular-perk-tag">🛋️ AC Included</span>
+          <span class="popular-perk-tag">🌿 Balcony Access</span>
+          <span class="popular-perk-tag">📶 High-Speed WiFi</span>
+          <span class="popular-perk-tag">🍽 Meals Included</span>
+          <span class="popular-perk-tag">⚡ Power Backup</span>
+          <span class="popular-perk-tag">🔒 24x7 Security</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 360 Viewer -->
+  <div class="viewer-section">
+    <div class="viewer-label">
+      🔄 360° Room View
+      <span>Drag left or right to look around</span>
+    </div>
+    <div class="viewer-container" id="viewer360">
+      <div class="viewer-tag">360° View</div>
+      <div class="degree-badge" id="degreeBadge">0°</div>
+      <div class="panorama-track" id="panoramaTrack">
+        <!-- Walls drawn by JS canvas inside each panel -->
+      </div>
+      <div class="viewer-hint" id="viewerHint">👆 Drag to look around the room</div>
+    </div>
+  </div>
+
+  <!-- Room info + sidebar -->
+  <div class="room-container" id="roomDetails">
+    <div class="room-info">
+      <div class="details-card">
+        <h2>Room Description</h2>
+        <p id="roomDescription">Loading...</p>
+      </div>
+      <div class="details-card">
+        <h2>Facilities</h2>
+        <div class="facility-tags" id="facilityTags"></div>
+      </div>
+    </div>
+
+    <div class="booking-sidebar">
+      <h2>Room Details</h2>
+      <div class="sidebar-row"><span>Monthly Rent</span><span id="sideRent">—</span></div>
+      <div class="sidebar-row"><span>Available Beds</span><span id="sideBeds">—</span></div>
+      <div class="sidebar-row"><span>Rating</span><span id="sideRating">—</span></div>
+      <div class="sidebar-row"><span>Room Type</span><span id="sideType">—</span></div>
+      <div style="margin-top:12px;">
+        <p class="available-tag">🟢 Available Now</p>
+      </div>
+      <a href="booking.html" id="bookNowBtn" class="btn" style="display:block;text-align:center;margin-top:10px;">
+        Book This Bed →
+      </a>
+    </div>
+  </div>
+
+  <section class="reviews">
+    <h2>What Residents Say</h2>
+    <div class="review-card">
+      <h3>⭐⭐⭐⭐⭐</h3>
+      <p>"The 360° view on the website was exactly what I saw in real life. Very clean rooms and excellent food!" — Priya M.</p>
+    </div>
+    <div class="review-card">
+      <h3>⭐⭐⭐⭐⭐</h3>
+      <p>"Double sharing room is totally worth it. Balcony, AC, and the staff are super helpful." — Rahul K.</p>
+    </div>
+    <div class="review-card">
+      <h3>⭐⭐⭐⭐</h3>
+      <p>"Safe environment and friendly roommates. The booking process was very smooth." — Sneha D.</p>
+    </div>
+  </section>
+
+  <footer>
+    <h2>PG Finder</h2>
+    <p>Safe • Affordable • Comfortable</p>
+    <p>Email: info@pgfinder.com &nbsp;|&nbsp; Phone: +91 9876543210</p>
+    <p>PG Management System &copy; 2026</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+  /* ============================================================
+     ROOM DATA
+  ============================================================ */
+  const ROOMS = {
+    single: {
+      title: "Single Sharing Room",
+      price: 6000,
+      beds: 2,
+      rating: "⭐⭐⭐⭐⭐ 4.8",
+      type: "Single occupancy",
+      description: "A spacious private-feel room with an attached washroom, study table, wardrobe, fast WiFi and round-the-clock security. Perfect for students or professionals who value personal space.",
+      facilities: ["📶 WiFi","🍽 Food","🧺 Laundry","📹 CCTV","⚡ Power Backup","💧 Water Supply"],
+      popular: false,
+      /* Wall colour theme for 360 viewer */
+      wallColor: "#d4e8ff",
+      accentColor: "#93c5fd"
+    },
+    double: {
+      title: "Double Sharing Room",
+      price: 4500,
+      beds: 4,
+      rating: "⭐⭐⭐⭐⭐ 4.9",
+      type: "Two occupants",
+      description: "Our most popular room — and for good reason. You get AC, balcony access, a co-working desk, high-speed WiFi, meals, and 24x7 security. Spacious enough to feel like home, priced better than anything else in Pune.",
+      facilities: ["📶 High-Speed WiFi","🍽 Meals Included","🧺 Laundry","📹 CCTV","⚡ Power Backup","💧 Water Supply","❄️ AC Included","🌿 Balcony Access"],
+      popular: true,
+      wallColor: "#fde68a",
+      accentColor: "#f59e0b"
+    },
+    triple: {
+      title: "Triple Sharing Room",
+      price: 3500,
+      beds: 6,
+      rating: "⭐⭐⭐⭐ 4.5",
+      type: "Three occupants",
+      description: "The smartest budget option in the city. Common lounge area, high-speed WiFi, home-style food included, and a warm community of fellow students and working professionals.",
+      facilities: ["📶 WiFi","🍽 Food Included","🧺 Laundry","📹 CCTV","⚡ Power Backup","💧 Water Supply"],
+      popular: false,
+      wallColor: "#d1fae5",
+      accentColor: "#6ee7b7"
+    }
+  };
+
+  /* Load room based on URL param */
+  const params = new URLSearchParams(window.location.search);
+  const roomKey = params.get("room") || "single";
+  const room = ROOMS[roomKey] || ROOMS.single;
+
+  document.getElementById("roomTitle").textContent = room.title;
+  document.getElementById("roomPriceTag").textContent = "₹" + room.price.toLocaleString() + " / Month";
+  document.getElementById("roomDescription").textContent = room.description;
+  document.getElementById("sideRent").textContent = "₹" + room.price.toLocaleString() + "/mo";
+  document.getElementById("sideBeds").textContent = room.beds + " available";
+  document.getElementById("sideRating").textContent = room.rating;
+  document.getElementById("sideType").textContent = room.type;
+  document.getElementById("bookNowBtn").href = "booking.html?room=" + roomKey;
+
+  const facContainer = document.getElementById("facilityTags");
+  room.facilities.forEach(f => {
+    const sp = document.createElement("span");
+    sp.textContent = f;
+    facContainer.appendChild(sp);
+  });
+
+  if(room.popular) {
+    document.getElementById("popularBanner").style.display = "block";
+  }
+
+  /* ============================================================
+     360° PANORAMA VIEWER
+     Draws 4 "walls" side by side using Canvas, then enables
+     drag-to-pan. Total width loops so dragging right wraps back.
+  ============================================================ */
+  (function() {
+    const PANEL_W = 700;
+    const PANEL_H = 360;
+    const PANELS = 4; // 4 walls of a room
+
+    const track = document.getElementById("panoramaTrack");
+    const viewer = document.getElementById("viewer360");
+    const badge  = document.getElementById("degreeBadge");
+    const hint   = document.getElementById("viewerHint");
+
+    /* Build panels */
+    const wallDefs = [
+      { name:"Front Wall",  furniture: drawFrontWall  },
+      { name:"Right Wall",  furniture: drawRightWall  },
+      { name:"Back Wall",   furniture: drawBackWall   },
+      { name:"Left Wall",   furniture: drawLeftWall   },
+    ];
+
+    wallDefs.forEach((def, i) => {
+      const canvas = document.createElement("canvas");
+      canvas.width  = PANEL_W;
+      canvas.height = PANEL_H;
+      canvas.style.cssText = "display:block;width:700px;height:360px;";
+      def.furniture(canvas, room.wallColor, room.accentColor, room.popular);
+      track.appendChild(canvas);
+
+      /* thin seam = room corner */
+      if(i < wallDefs.length - 1) {
+        const seam = document.createElement("div");
+        seam.className = "wall-seam";
+        track.appendChild(seam);
+      }
+    });
+
+    /* Duplicate first panel at end for seamless looping */
+    const clone = track.children[0].cloneNode(true);
+    const cloneSeam = document.createElement("div");
+    cloneSeam.className = "wall-seam";
+    track.appendChild(cloneSeam);
+    track.appendChild(clone);
+
+    /* Total scrollable width */
+    const totalW = PANEL_W * PANELS + 6 * (PANELS);
+
+    /* Drag state */
+    let startX = 0, currentX = 0, isDragging = false;
+    let offsetX = 0; // current scroll position
+
+    function setOffset(x) {
+      offsetX = ((x % totalW) + totalW) % totalW;
+      track.style.transform = "translateX(-" + offsetX + "px)";
+      const deg = Math.round((offsetX / totalW) * 360);
+      badge.textContent = deg + "°";
+    }
+
+    /* Mouse */
+    viewer.addEventListener("mousedown", e => {
+      isDragging = true;
+      startX = e.clientX;
+      hint.style.opacity = "0";
+    });
+    window.addEventListener("mousemove", e => {
+      if(!isDragging) return;
+      const dx = startX - e.clientX;
+      setOffset(offsetX + dx * 0.8);
+      startX = e.clientX;
+    });
+    window.addEventListener("mouseup", () => { isDragging = false; });
+
+    /* Touch */
+    viewer.addEventListener("touchstart", e => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      hint.style.opacity = "0";
+    });
+    viewer.addEventListener("touchmove", e => {
+      if(!isDragging) return;
+      const dx = startX - e.touches[0].clientX;
+      setOffset(offsetX + dx * 0.8);
+      startX = e.touches[0].clientX;
+      e.preventDefault();
+    }, { passive: false });
+    viewer.addEventListener("touchend", () => { isDragging = false; });
+
+    setOffset(0);
+
+    /* ---- DRAWING FUNCTIONS ---- */
+    function drawRoom(canvas, wall, accent, popular, drawFn) {
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
+
+      /* Sky/ceiling */
+      ctx.fillStyle = "#f0f4ff";
+      ctx.fillRect(0, 0, W, H * 0.18);
+
+      /* Wall */
+      ctx.fillStyle = wall;
+      ctx.fillRect(0, H * 0.18, W, H * 0.54);
+
+      /* Floor */
+      ctx.fillStyle = "#c8a96e";
+      ctx.fillRect(0, H * 0.72, W, H * 0.28);
+
+      /* Floor tiles */
+      ctx.strokeStyle = "rgba(0,0,0,0.07)";
+      ctx.lineWidth = 1;
+      for(let x = 0; x < W; x += 60) {
+        ctx.beginPath(); ctx.moveTo(x, H*0.72); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for(let y = H*0.72; y < H; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      /* Skirting board */
+      ctx.fillStyle = "#b8956a";
+      ctx.fillRect(0, H*0.72, W, 8);
+
+      /* Ceiling cornice */
+      ctx.fillStyle = "#e2e8f5";
+      ctx.fillRect(0, H*0.18, W, 10);
+
+      /* Popular room gets warm light glow on wall */
+      if(popular) {
+        const grd = ctx.createRadialGradient(W/2, H*0.45, 40, W/2, H*0.45, 280);
+        grd.addColorStop(0, "rgba(245,158,11,0.12)");
+        grd.addColorStop(1, "rgba(245,158,11,0)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      drawFn(ctx, W, H, wall, accent, popular);
+    }
+
+    function drawFrontWall(canvas, wall, accent, popular) {
+      drawRoom(canvas, wall, accent, popular, (ctx, W, H) => {
+        /* Window */
+        ctx.fillStyle = "#bfdbfe";
+        ctx.fillRect(W/2 - 80, H*0.22, 160, 110);
+        ctx.strokeStyle = "#93c5fd"; ctx.lineWidth = 3;
+        ctx.strokeRect(W/2 - 80, H*0.22, 160, 110);
+        /* window cross */
+        ctx.beginPath(); ctx.moveTo(W/2, H*0.22); ctx.lineTo(W/2, H*0.22+110); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W/2-80, H*0.22+55); ctx.lineTo(W/2+80, H*0.22+55); ctx.stroke();
+        /* curtains */
+        ctx.fillStyle = popular ? "#fde68a" : "#dbeafe";
+        ctx.fillRect(W/2 - 100, H*0.20, 20, 120);
+        ctx.fillRect(W/2 + 80, H*0.20, 20, 120);
+
+        /* Study desk */
+        ctx.fillStyle = "#92400e";
+        ctx.fillRect(80, H*0.55, 200, 16);
+        ctx.fillRect(88, H*0.55+14, 12, H*0.72-H*0.55-14);
+        ctx.fillRect(260, H*0.55+14, 12, H*0.72-H*0.55-14);
+        /* Laptop on desk */
+        ctx.fillStyle = "#334155"; ctx.fillRect(130, H*0.44, 90, 60);
+        ctx.fillStyle = "#0f172a"; ctx.fillRect(135, H*0.45, 80, 52);
+        ctx.fillStyle = "#3b82f6"; ctx.fillRect(140, H*0.47, 70, 42); // screen
+        ctx.fillStyle = "#475569"; ctx.fillRect(118, H*0.55+2, 114, 8);
+
+        /* Chair */
+        ctx.fillStyle = popular ? "#f59e0b" : "#2563eb";
+        ctx.fillRect(145, H*0.60, 70, 6);
+        ctx.fillRect(155, H*0.60+6, 10, 50);
+        ctx.fillRect(205, H*0.60+6, 10, 50);
+
+        /* Ceiling fan */
+        ctx.fillStyle = "#94a3b8";
+        ctx.beginPath(); ctx.arc(W/2, H*0.20, 6, 0, Math.PI*2); ctx.fill();
+        ctx.fillRect(W/2-50, H*0.19, 100, 6);
+        ctx.fillRect(W/2-3, H*0.19-45, 6, 100);
+
+        /* PG Finder wall sign */
+        ctx.fillStyle = popular ? "#d97706" : "#1d4ed8";
+        ctx.font = "bold 13px Poppins, sans-serif";
+        ctx.fillText("PG Finder", W - 120, H*0.28);
+
+        /* Bed */
+        ctx.fillStyle = "#7c3aed";
+        ctx.fillRect(W-220, H*0.55, 160, 16);
+        ctx.fillStyle = "#ddd6fe"; ctx.fillRect(W-210, H*0.38, 140, 120);
+        ctx.fillStyle = "#c4b5fd"; ctx.fillRect(W-205, H*0.42, 60, 40);
+        ctx.fillStyle = "#c4b5fd"; ctx.fillRect(W-135, H*0.42, 60, 40);
+        ctx.fillStyle = "#7c3aed"; ctx.fillRect(W-220, H*0.38, 14, 130);
+        ctx.fillStyle = "#7c3aed"; ctx.fillRect(W-64, H*0.38, 14, 130);
+      });
+    }
+
+    function drawRightWall(canvas, wall, accent, popular) {
+      drawRoom(canvas, wall, accent, popular, (ctx, W, H) => {
+        /* Wardrobe */
+        ctx.fillStyle = "#78350f";
+        ctx.fillRect(50, H*0.25, 130, H*0.47);
+        ctx.fillStyle = "#92400e";
+        ctx.fillRect(55, H*0.27, 58, H*0.45);
+        ctx.fillRect(118, H*0.27, 58, H*0.45);
+        /* wardrobe handles */
+        ctx.fillStyle = "#fbbf24";
+        ctx.fillRect(105, H*0.48, 8, 14); ctx.fillRect(120, H*0.48, 8, 14);
+
+        /* Mirror above wardrobe */
+        ctx.fillStyle = "#bfdbfe"; ctx.fillRect(55, H*0.18, 118, 60);
+        ctx.strokeStyle = "#93c5fd"; ctx.lineWidth = 2;
+        ctx.strokeRect(55, H*0.18, 118, 60);
+
+        /* AC unit */
+        if(popular) {
+          ctx.fillStyle = "#f3f4f6";
+          ctx.fillRect(W/2 - 90, H*0.20, 180, 45);
+          ctx.fillStyle = "#e2e8f0"; ctx.fillRect(W/2 - 85, H*0.23, 170, 5);
+          ctx.fillStyle = "#e2e8f0"; ctx.fillRect(W/2 - 85, H*0.30, 170, 5);
+          ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(W/2 + 75, H*0.24, 4, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = "#94a3b8"; ctx.font = "10px sans-serif"; ctx.fillText("AC   22°C", W/2 - 60, H*0.27);
+        }
+
+        /* Bookshelf */
+        ctx.fillStyle = "#92400e";
+        ctx.fillRect(W-200, H*0.22, 150, 200);
+        const bookColors = ["#ef4444","#3b82f6","#22c55e","#f59e0b","#8b5cf6","#ec4899","#0ea5e9","#a3e635"];
+        bookColors.forEach((c,i) => {
+          ctx.fillStyle = c;
+          ctx.fillRect(W-194 + i*17, H*0.26, 14, 80);
+        });
+        bookColors.forEach((c,i) => {
+          ctx.fillStyle = c;
+          ctx.fillRect(W-194 + i*17, H*0.36, 14, 70);
+        });
+      });
+    }
+
+    function drawBackWall(canvas, wall, accent, popular) {
+      drawRoom(canvas, wall, accent, popular, (ctx, W, H) => {
+        /* Door */
+        ctx.fillStyle = "#a16207";
+        ctx.fillRect(W/2 - 55, H*0.24, 110, H*0.48);
+        ctx.fillStyle = "#ca8a04";
+        ctx.fillRect(W/2 - 50, H*0.27, 45, 90);
+        ctx.fillRect(W/2 + 5, H*0.27, 45, 90);
+        ctx.fillStyle = "#fbbf24"; // door knob
+        ctx.beginPath(); ctx.arc(W/2 - 10, H*0.5, 7, 0, Math.PI*2); ctx.fill();
+
+        /* Noticeboard */
+        ctx.fillStyle = "#d97706";
+        ctx.fillRect(W-220, H*0.22, 160, 100);
+        ctx.fillStyle = "#fef3c7";
+        ctx.fillRect(W-215, H*0.24, 150, 90);
+        // sticky notes
+        ctx.fillStyle = "#bef264"; ctx.fillRect(W-210, H*0.26, 40, 35);
+        ctx.fillStyle = "#fdba74"; ctx.fillRect(W-160, H*0.26, 40, 35);
+        ctx.fillStyle = "#c4b5fd"; ctx.fillRect(W-210, H*0.31+24, 40, 35);
+        ctx.fillStyle = "#67e8f9"; ctx.fillRect(W-160, H*0.31+24, 40, 35);
+
+        /* Balcony door (only for double) */
+        if(popular) {
+          ctx.fillStyle = "#bfdbfe";
+          ctx.fillRect(80, H*0.25, 110, H*0.47);
+          ctx.strokeStyle = "#93c5fd"; ctx.lineWidth = 3;
+          ctx.strokeRect(80, H*0.25, 110, H*0.47);
+          ctx.beginPath(); ctx.moveTo(135, H*0.25); ctx.lineTo(135, H*0.25+H*0.47); ctx.stroke();
+          /* balcony label */
+          ctx.fillStyle = "#1d4ed8"; ctx.font = "11px Poppins, sans-serif";
+          ctx.fillText("Balcony →", 92, H*0.52);
+        }
+
+        /* Potted plants */
+        ctx.fillStyle = "#854d0e"; ctx.fillRect(W/2 - 120, H*0.65, 22, 6);
+        ctx.fillStyle = "#65a30d"; ctx.beginPath(); ctx.arc(W/2 - 109, H*0.55, 20, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#4d7c0f"; ctx.beginPath(); ctx.arc(W/2 - 109, H*0.52, 12, 0, Math.PI*2); ctx.fill();
+      });
+    }
+
+    function drawLeftWall(canvas, wall, accent, popular) {
+      drawRoom(canvas, wall, accent, popular, (ctx, W, H) => {
+        /* Bed (main feature of left wall) */
+        ctx.fillStyle = popular ? "#d97706" : "#7c3aed";
+        /* headboard */
+        ctx.fillRect(W*0.08, H*0.25, W*0.55, 20);
+        /* mattress */
+        ctx.fillStyle = "#f5f3ff";
+        ctx.fillRect(W*0.08, H*0.25+18, W*0.55, H*0.40);
+        /* bedsheet */
+        ctx.fillStyle = popular ? "#fde68a" : "#ddd6fe";
+        ctx.fillRect(W*0.10, H*0.36, W*0.50, H*0.28);
+        /* pillow 1 */
+        ctx.fillStyle = "white";
+        ctx.fillRect(W*0.12, H*0.28, 80, 50);
+        /* pillow 2 */
+        ctx.fillStyle = popular ? "#fef3c7" : "#ede9fe";
+        ctx.fillRect(W*0.12 + 95, H*0.28, 80, 50);
+        /* bed legs */
+        ctx.fillStyle = popular ? "#b45309" : "#4c1d95";
+        ctx.fillRect(W*0.08, H*0.66, 14, H*0.72-H*0.66);
+        ctx.fillRect(W*0.62, H*0.66, 14, H*0.72-H*0.66);
+
+        /* Side lamp */
+        ctx.fillStyle = "#92400e";
+        ctx.fillRect(W*0.66, H*0.38, 10, 120);
+        ctx.fillStyle = "#fef08a";
+        ctx.beginPath(); ctx.arc(W*0.66+5, H*0.34, 22, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "rgba(255,240,0,0.15)";
+        ctx.beginPath(); ctx.arc(W*0.66+5, H*0.34, 60, 0, Math.PI*2); ctx.fill();
+
+        /* Second bed for double/triple */
+        if(popular) {
+          ctx.fillStyle = "#d97706";
+          ctx.fillRect(W*0.08, H*0.50, W*0.55, 14);
+          ctx.fillStyle = "#fffbeb";
+          ctx.fillRect(W*0.08, H*0.50+12, W*0.55, H*0.22);
+          ctx.fillStyle = "#fde68a";
+          ctx.fillRect(W*0.10, H*0.56, W*0.50, H*0.16);
+          ctx.fillStyle = "white"; ctx.fillRect(W*0.12, H*0.51+4, 70, 40);
+          ctx.fillStyle = "#fef3c7"; ctx.fillRect(W*0.12+80, H*0.51+4, 70, 40);
+        }
+
+        /* Wall art */
+        ctx.fillStyle = "#334155";
+        ctx.fillRect(W-170, H*0.22, 100, 80);
+        ctx.fillStyle = popular ? "#fbbf24" : "#818cf8";
+        ctx.beginPath(); ctx.arc(W-120, H*0.22+40, 28, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = popular ? "#f59e0b" : "#6366f1";
+        ctx.fillRect(W-160, H*0.22+20, 30, 40);
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>

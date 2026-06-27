@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rooms | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .rooms-hero {
+      height:30vh;
+      background:linear-gradient(rgba(76,29,149,.82),rgba(15,23,42,.82));
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      color:white;text-align:center;
+    }
+    .rooms-hero h1{font-size:34px;} .rooms-hero p{font-size:15px;opacity:.88;margin-top:8px;}
+    .popular-card-wrap{max-width:1100px;margin:36px auto 10px;padding:0 20px;}
+    .popular-card{
+      background:linear-gradient(135deg,#fdf4ff,#fce7f3);
+      border:2px solid #f43f5e;border-radius:20px;
+      display:grid;grid-template-columns:1fr 1fr;overflow:hidden;
+      box-shadow:0 12px 36px rgba(244,63,94,0.18);position:relative;
+    }
+    .most-loved-badge{position:absolute;top:-1px;left:24px;background:#f43f5e;color:white;font-size:11px;font-weight:700;padding:5px 14px;border-radius:0 0 10px 10px;}
+    .popular-card-left{padding:30px 26px;}
+    .popular-card-right{position:relative;min-height:270px;}
+    .popular-card-right img{width:100%;height:100%;object-fit:cover;display:block;}
+    .chip-360{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.6);color:white;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;}
+    .popular-card-left h2{font-size:22px;color:#0f172a;margin:16px 0 6px;}
+    .big-price{font-size:30px;font-weight:700;color:#f43f5e;}
+    .big-price span{font-size:14px;font-weight:400;color:#64748b;}
+    .popular-card-perks{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+    .popular-card-perk{background:#fce7f3;color:#9f1239;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+    .popular-rating{color:#f43f5e;font-weight:700;font-size:13px;margin-top:10px;}
+    .popular-card-btns{display:flex;gap:10px;margin-top:16px;}
+    .btn-rose{padding:12px 22px;background:#f43f5e;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:0.2s;display:inline-block;}
+    .btn-rose:hover{background:#e11d48;transform:translateY(-2px);}
+    .search-box{display:flex;justify-content:center;margin-bottom:14px;}
+    .search-box input{width:100%;max-width:400px;padding:11px 18px;border:1.5px solid #e9d5ff;border-radius:50px;font-size:14px;font-family:'Poppins',sans-serif;}
+    .filter-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+    .filter-buttons button{padding:8px 20px;border:1.5px solid #e9d5ff;background:white;border-radius:50px;cursor:pointer;font-size:13px;font-weight:500;transition:0.2s;font-family:'Poppins',sans-serif;}
+    .filter-buttons button.active,.filter-buttons button:hover{background:#7c3aed;color:white;border-color:#7c3aed;}
+    .card-container{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1100px;margin:auto;}
+    .card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 6px 22px rgba(124,58,237,0.1);transition:0.3s;border:1px solid #f3e8ff;}
+    .card:hover{transform:translateY(-6px);box-shadow:0 16px 36px rgba(124,58,237,0.18);}
+    .card img{width:100%;height:200px;object-fit:cover;}
+    .card-content{padding:18px;}
+    .card-content h3{font-size:15px;font-weight:600;margin-bottom:6px;}
+    .card-content p{font-size:13px;color:#64748b;margin-bottom:5px;}
+    .facility-tags{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0;}
+    .facility-tags span{background:#f5f3ff;color:#7c3aed;padding:4px 10px;border-radius:16px;font-size:11px;font-weight:600;}
+    .available{display:inline-block;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:16px;font-weight:700;font-size:12px;margin:5px 0;}
+    .rating{color:#f59e0b;font-weight:700;font-size:13px;margin:4px 0;}
+    .room-buttons{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+    .room-buttons a{flex:1;text-align:center;min-width:90px;}
+    .btn-outline{display:inline-block;padding:10px;border:1.5px solid #7c3aed;background:white;color:#7c3aed;border-radius:8px;cursor:pointer;text-decoration:none;font-size:12px;font-weight:600;transition:0.2s;width:100%;text-align:center;}
+    .btn-outline:hover{background:#7c3aed;color:white;}
+    .ladies-only-badge{background:#fce7f3;color:#9f1239;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+    @media(max-width:768px){.popular-card{grid-template-columns:1fr;}.card-container{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="security-ticker">
+    🔒 Women-only verified hostel · 24x7 CCTV · Female warden on premises ·
+    <a href="tel:+919876543210">Emergency: +91 9876543210</a>
+  </div>
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="facilities.html">Facilities</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <section class="rooms-hero">
+    <h1>🌸 Find Your Room at SheStay</h1>
+    <p>All beds are ladies-only · Verified · Safe · Comfortable</p>
+  </section>
+
+  <!-- Double sharing hero card -->
+  <div class="popular-card-wrap">
+    <div class="popular-card">
+      <div class="most-loved-badge">💕 Most Loved by Residents · 200+ Women Chose This</div>
+      <div class="popular-card-left">
+        <div class="ladies-only-badge">👩 Ladies Only</div>
+        <h2>Double Sharing Room</h2>
+        <div class="big-price">₹4,500 <span>/ month</span></div>
+        <div class="popular-card-perks">
+          <span class="popular-card-perk">❄️ AC Included</span>
+          <span class="popular-card-perk">🌿 Balcony Access</span>
+          <span class="popular-card-perk">📶 High-Speed WiFi</span>
+          <span class="popular-card-perk">🍽 Meals Included</span>
+          <span class="popular-card-perk">🚨 Panic Button</span>
+          <span class="popular-card-perk">📹 CCTV on Floor</span>
+        </div>
+        <div class="popular-rating">⭐⭐⭐⭐⭐ 4.9 · 4 beds available</div>
+        <div class="popular-card-btns">
+          <a href="room-details.html?room=double" class="btn-rose">View 360° Room →</a>
+          <a href="booking.html?room=double" class="btn-outline">Book Now</a>
+        </div>
+      </div>
+      <div class="popular-card-right">
+        <img src="images/room2.jpg" alt="Double sharing room">
+        <div class="chip-360">🔄 360° View Available</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="padding-bottom:0;">
+    <h2 class="section-title" style="font-size:22px;">All Available Rooms</h2>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 Search room type...">
+    </div>
+    <div class="filter-buttons">
+      <button data-filter="all" class="active">All Rooms</button>
+      <button data-filter="single">Single</button>
+      <button data-filter="double">Double</button>
+      <button data-filter="triple">Triple</button>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="card-container">
+      <!-- Single -->
+      <div class="card room-card" data-room-type="single">
+        <img src="images/room1.jpg" alt="Single sharing room">
+        <div class="card-content">
+          <div class="ladies-only-badge">👩 Ladies Only</div>
+          <h3>Single Sharing</h3>
+          <p>Rent: ₹6,000/month · 2 beds free</p>
+          <div class="facility-tags"><span>WiFi</span><span>Food</span><span>CCTV</span><span>Panic Button</span></div>
+          <span class="available">🟢 Available</span>
+          <p class="rating">⭐⭐⭐⭐⭐ 4.8</p>
+          <div class="room-buttons">
+            <a href="room-details.html?room=single" class="btn" style="font-size:12px;padding:10px;">View 360°</a>
+            <a href="booking.html?room=single" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <!-- Double -->
+      <div class="card room-card" data-room-type="double" style="border:2px solid #f43f5e;box-shadow:0 8px 28px rgba(244,63,94,0.18);">
+        <div style="position:relative;">
+          <img src="images/room2.jpg" alt="Double sharing room">
+          <div style="position:absolute;top:10px;left:10px;background:#f43f5e;color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">💕 MOST POPULAR</div>
+        </div>
+        <div class="card-content">
+          <div class="ladies-only-badge">👩 Ladies Only</div>
+          <h3>Double Sharing <span style="font-size:11px;background:#fce7f3;color:#f43f5e;padding:2px 8px;border-radius:10px;font-weight:700;">Best Value</span></h3>
+          <p style="color:#f43f5e;font-weight:600;">Rent: ₹4,500/month · 4 beds free</p>
+          <div class="facility-tags"><span>WiFi</span><span>Food</span><span>AC</span><span>Balcony</span><span>Panic Button</span></div>
+          <span class="available">🟢 Available</span>
+          <p class="rating">⭐⭐⭐⭐⭐ 4.9</p>
+          <div class="room-buttons">
+            <a href="room-details.html?room=double" class="btn" style="font-size:12px;padding:10px;background:#f43f5e;">View 360°</a>
+            <a href="booking.html?room=double" class="btn-outline" style="border-color:#f43f5e;color:#f43f5e;">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <!-- Triple -->
+      <div class="card room-card" data-room-type="triple">
+        <img src="images/room3.jpg" alt="Triple sharing room">
+        <div class="card-content">
+          <div class="ladies-only-badge">👩 Ladies Only</div>
+          <h3>Triple Sharing</h3>
+          <p>Rent: ₹3,500/month · 6 beds free</p>
+          <div class="facility-tags"><span>WiFi</span><span>Food</span><span>CCTV</span><span>Panic Button</span></div>
+          <span class="available">🟢 Available</span>
+          <p class="rating">⭐⭐⭐⭐ 4.5</p>
+          <div class="room-buttons">
+            <a href="room-details.html?room=triple" class="btn" style="font-size:12px;padding:10px;">View 360°</a>
+            <a href="booking.html?room=triple" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <h2>SheStay 🌸</h2>
+    <p>Safe · Comfortable · Women Only</p>
+    <p class="emergency-line">🚨 Emergency: +91 9876543210 (24x7)</p>
+    <p>SheStay Girls Hostel &copy; 2026</p>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
