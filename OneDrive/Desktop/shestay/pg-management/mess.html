@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mess Plan | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .mess-hero { background:linear-gradient(135deg,#7c3aed,#4c1d95); color:white; text-align:center; padding:60px 20px; }
+    .mess-hero h1 { font-size:34px; margin-bottom:10px; }
+    .mess-hero p  { font-size:15px; opacity:.88; }
+
+    .mess-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:22px; max-width:1000px; margin:40px auto 0; }
+    .mess-card { background:white; border-radius:16px; padding:26px 22px; box-shadow:0 4px 18px rgba(124,58,237,0.09); border:1px solid #f3e8ff; text-align:center; }
+    .mess-card .m-icon { font-size:40px; margin-bottom:12px; }
+    .mess-card h3 { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+    .mess-card .m-time { font-size:13px; color:#7c3aed; font-weight:600; margin-bottom:8px; }
+    .mess-card p  { font-size:13px; color:#64748b; line-height:1.7; }
+
+    .mess-price-box {
+      max-width:500px; margin:40px auto; background:linear-gradient(135deg,#fdf4ff,#f5f3ff);
+      border:2px solid #e9d5ff; border-radius:20px; padding:32px; text-align:center;
+    }
+    .mess-price-box h2 { font-size:22px; font-weight:700; color:#0f172a; margin-bottom:8px; }
+    .mess-price-box .price { font-size:42px; font-weight:700; color:#7c3aed; margin:10px 0; }
+    .mess-price-box .price span { font-size:16px; font-weight:400; color:#64748b; }
+    .mess-price-box p { font-size:13px; color:#64748b; line-height:1.7; margin-bottom:20px; }
+
+    .mess-rules { max-width:700px; margin:0 auto 60px; padding:0 20px; }
+    .mess-rules h2 { font-size:20px; font-weight:700; text-align:center; margin-bottom:20px; }
+    .rule-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .rule-item { display:flex; gap:10px; align-items:flex-start; background:white; border-radius:12px; padding:14px 16px; border:1px solid #f3e8ff; font-size:13px; color:#475569; line-height:1.6; }
+    .rule-item .ri { font-size:18px; flex-shrink:0; }
+    @media(max-width:600px){ .rule-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="security-ticker">
+    🔒 Women-only verified hostel · 24x7 CCTV · Female warden on premises ·
+    <a href="tel:+919876543210">Emergency: +91 9876543210</a>
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="mess.html">Mess</a></li>
+      <li><a href="facilities.html">Facilities</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="tel:+919876543210" class="nav-emergency">🚨 SOS</a></li>
+    </ul>
+  </nav>
+
+  <div class="mess-hero">
+    <h1>🍽️ SheStay Mess Plan</h1>
+    <p>Optional · Home-style meals · ID card access only · Hygienic kitchen</p>
+  </div>
+
+  <section class="section">
+    <div class="mess-price-box">
+      <h2>Optional Mess Plan</h2>
+      <div class="price">₹5,000 <span>/ month</span></div>
+      <p>Mess plan is completely optional. Only residents who subscribe get access to the dining area via their ID card. 3 meals a day — breakfast, lunch and dinner — freshly prepared by our in-house kitchen staff.</p>
+      <a href="contact.html" class="btn">Enquire to Subscribe</a>
+    </div>
+
+    <div class="mess-grid">
+      <div class="mess-card">
+        <div class="m-icon">🌅</div>
+        <h3>Breakfast</h3>
+        <div class="m-time">7:00 AM – 9:00 AM</div>
+        <p>Poha, upma, idli, paratha or bread with tea/coffee. Rotating menu every day.</p>
+      </div>
+      <div class="mess-card">
+        <div class="m-icon">☀️</div>
+        <h3>Lunch</h3>
+        <div class="m-time">12:30 PM – 2:30 PM</div>
+        <p>2 sabzi, dal, rice, chapati, salad and papad. Fresh and home-style every day.</p>
+      </div>
+      <div class="mess-card">
+        <div class="m-icon">🌙</div>
+        <h3>Dinner</h3>
+        <div class="m-time">7:30 PM – 9:30 PM</div>
+        <p>Dal, sabzi, rice or chapati, pickle and dessert on weekends. Nutritious and hygienic.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="mess-rules">
+      <h2>🪪 Mess Rules & Access Policy</h2>
+      <div class="rule-grid">
+        <div class="rule-item"><span class="ri">🪪</span> ID card is mandatory to enter the dining area. No ID = no entry, no exceptions.</div>
+        <div class="rule-item"><span class="ri">👩</span> Mess access is for subscribed female residents only. No guests or outsiders allowed.</div>
+        <div class="rule-item"><span class="ri">🕐</span> Meals are served only during fixed timings. No takeaway or outside serving.</div>
+        <div class="rule-item"><span class="ri">🧹</span> Keep the dining area clean. Residents are expected to clear their own plates.</div>
+        <div class="rule-item"><span class="ri">📵</span> No food wastage. Take only what you can eat — we prepare exactly enough.</div>
+        <div class="rule-item"><span class="ri">💳</span> Mess plan is monthly. Subscribe or unsubscribe by the 25th of each month.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <h2>SheStay 🌸</h2>
+    <p>Safe · Comfortable · Women Only</p>
+    <p class="emergency-line">🚨 Emergency: +91 9876543210 (24x7)</p>
+    <p>SheStay Girls Hostel &copy; 2026</p>
+  </footer>
+
+  <script type="module" src="js/script.js"></script>
+</body>
+</html>

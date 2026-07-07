@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--primary:#7c3aed;--primary-dark:#6d28d9;--rose:#f43f5e;--success:#22c55e;--warning:#f59e0b;--bg:#f5f3ff;--sidebar-bg:#0f172a;--white:#fff;--text:#1e293b;--muted:#64748b;--border:#e9d5ff;}
+    body{font-family:'Poppins',sans-serif;background:var(--bg);min-height:100vh;}
+    #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#4c1d95,#7c3aed);}
+    .login-card{background:white;border-radius:20px;padding:40px 36px;width:90%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+    .login-card h1{font-size:20px;color:#0f172a;margin:12px 0 4px;}
+    .login-card p{font-size:12px;color:#64748b;margin-bottom:22px;}
+    .login-card input{width:100%;padding:11px 14px;border:1.5px solid #e9d5ff;border-radius:8px;font-size:14px;font-family:'Poppins',sans-serif;margin-bottom:10px;display:block;}
+    .login-card input:focus{outline:none;border-color:#7c3aed;}
+    .login-card .login-btn{width:100%;padding:12px;background:#7c3aed;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+    .login-card .login-btn:hover{background:#6d28d9;}
+    .login-hint{background:#f5f3ff;border-radius:10px;padding:10px 14px;margin-top:14px;font-size:11px;color:#7c3aed;text-align:left;line-height:1.8;}
+    #loginErr{color:#f43f5e;font-size:12px;margin-top:8px;min-height:18px;}
+    #dashboard{display:none;min-height:100vh;}
+    .layout{display:flex;min-height:100vh;}
+    .sidebar{width:220px;background:var(--sidebar-bg);color:white;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;}
+    .sb-brand{padding:22px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .sb-brand h2{font-size:17px;color:#e9d5ff;font-weight:700;}
+    .sb-brand p{font-size:10px;color:#94a3b8;margin-top:3px;}
+    .sb-nav{flex:1;padding:14px 0;overflow-y:auto;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:11px 18px;color:#94a3b8;cursor:pointer;transition:0.2s;font-size:13px;font-weight:500;border-left:3px solid transparent;}
+    .nav-item:hover{background:rgba(255,255,255,0.05);color:white;}
+    .nav-item.active{background:rgba(124,58,237,0.2);color:#e9d5ff;border-left-color:#7c3aed;}
+    .nav-item .icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.07);}
+    .sb-status{font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;text-align:center;margin-bottom:10px;background:rgba(245,158,11,0.2);color:#fbbf24;}
+    .logout-btn{width:100%;padding:9px;background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:#fca5a5;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;}
+    .logout-btn:hover{background:rgba(244,63,94,0.28);}
+    .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
+    .topbar{background:white;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
+    .topbar h1{font-size:16px;font-weight:700;color:#0f172a;}
+    .refresh-btn{padding:7px 16px;background:#f5f3ff;border:1.5px solid #e9d5ff;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:#7c3aed;font-family:'Poppins',sans-serif;}
+    .refresh-btn:hover{background:#e9d5ff;}
+    .content{padding:20px 24px;flex:1;}
+    .tab-section{display:none;}
+    .tab-section.active{display:block;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px;}
+    .stat-card{background:white;border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(124,58,237,0.08);border:1px solid var(--border);position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+    .stat-card.c1::before{background:#7c3aed;}.stat-card.c2::before{background:#f43f5e;}.stat-card.c3::before{background:#f59e0b;}.stat-card.c4::before{background:#22c55e;}
+    .sc-icon{font-size:26px;margin-bottom:8px;}
+    .sc-value{font-size:28px;font-weight:700;color:#0f172a;line-height:1;}
+    .sc-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-top:5px;}
+    .sc-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+    .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+    .recent-card{background:white;border-radius:14px;padding:18px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(124,58,237,0.07);}
+    .recent-card h3{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:14px;}
+    .recent-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #faf5ff;font-size:13px;}
+    .recent-item:last-child{border-bottom:none;}
+    .ri-name{font-weight:600;color:#0f172a;font-size:13px;}
+    .ri-sub{font-size:11px;color:var(--muted);}
+    .empty-msg{color:var(--muted);font-size:12px;text-align:center;padding:20px 0;}
+    .page-list{display:flex;flex-direction:column;gap:10px;}
+    .page-row{display:flex;align-items:center;gap:10px;}
+    .page-name{font-size:12px;color:#0f172a;width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .bar-wrap{flex:1;background:#f1f5f9;border-radius:20px;height:9px;}
+    .bar-fill{background:linear-gradient(to right,#7c3aed,#a78bfa);height:9px;border-radius:20px;transition:width 0.6s ease;}
+    .bar-count{font-size:11px;font-weight:700;color:var(--primary);width:24px;text-align:right;flex-shrink:0;}
+    .table-card{background:white;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(124,58,237,0.07);border:1px solid var(--border);}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+    .table-header h2{font-size:15px;font-weight:700;color:#0f172a;}
+    .tbl-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .tbl-search{padding:8px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:'Poppins',sans-serif;width:200px;}
+    .tbl-search:focus{outline:none;border-color:#7c3aed;}
+    .export-btn{padding:7px 16px;background:#7c3aed;color:white;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Poppins',sans-serif;}
+    .export-btn:hover{background:#6d28d9;}
+    .tbl-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    thead th{background:#fdf4ff;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+    tbody td{padding:11px 12px;border-bottom:1px solid #faf5ff;color:var(--text);vertical-align:top;}
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:#fdf4ff;}
+    .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;}
+    .b-pending{background:#fef9c3;color:#92400e;}.b-confirmed{background:#dcfce7;color:#15803d;}.b-unread{background:#fee2e2;color:#991b1b;}.b-read{background:#f1f5f9;color:#475569;}.b-active{background:#dbeafe;color:#1e40af;}.b-pv{background:#f5f3ff;color:#7c3aed;}
+    .no-data td{text-align:center;color:var(--muted);padding:28px;font-size:12px;}
+    .setup-card{background:white;border-radius:14px;padding:24px;border:2px dashed #e9d5ff;margin-bottom:20px;}
+    .setup-steps{display:flex;flex-direction:column;gap:10px;}
+    .setup-step{display:flex;gap:12px;align-items:flex-start;font-size:12px;color:#475569;line-height:1.6;}
+    .step-num{background:#7c3aed;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+    .setup-card a{color:#7c3aed;font-weight:600;}
+    .code-snippet{background:#0f172a;color:#e9d5ff;border-radius:8px;padding:10px 14px;font-size:11px;font-family:monospace;margin-top:8px;overflow-x:auto;}
+    @media(max-width:900px){.sidebar{width:55px;}.sb-brand p,.sb-brand h2,.nav-item span{display:none;}.main{margin-left:55px;}.stats-row{grid-template-columns:1fr 1fr;}.dash-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <div style="font-size:40px;">🔐</div>
+    <h1>Warden Admin Panel</h1>
+    <p>SheStay Girls Hostel · Authorised Access Only</p>
+    <input type="email"    id="adminEmail"    placeholder="Warden email">
+    <input type="password" id="adminPassword" placeholder="Password">
+    <div id="loginErr"></div>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-hint">
+      📧 Default email: <b>warden@shestay.in</b><br>
+      🔑 Default password: <b>Shestay@2026</b><br>
+      💾 Data source: <b>localStorage (works offline)</b>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sb-brand">
+        <h2>SheStay 🌸</h2>
+        <p>Warden Dashboard</p>
+      </div>
+      <nav class="sb-nav">
+        <div class="nav-item active" data-tab="overview"  onclick="switchTab(this)"><span class="icon">📊</span><span>Overview</span></div>
+        <div class="nav-item"        data-tab="bookings"  onclick="switchTab(this)"><span class="icon">🛏️</span><span>Bookings</span></div>
+        <div class="nav-item"        data-tab="users"     onclick="switchTab(this)"><span class="icon">👩</span><span>Residents</span></div>
+        <div class="nav-item"        data-tab="enquiries" onclick="switchTab(this)"><span class="icon">📧</span><span>Enquiries</span></div>
+        <div class="nav-item"        data-tab="visits"    onclick="switchTab(this)"><span class="icon">📈</span><span>Visits</span></div>
+        <div class="nav-item"        data-tab="logins"    onclick="switchTab(this)"><span class="icon">🔐</span><span>Logins</span></div>
+        <div class="nav-item"        data-tab="firebase"  onclick="switchTab(this)"><span class="icon">🔥</span><span>Firebase Setup</span></div>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-status">💾 localStorage</div>
+        <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h1 id="pageTitle">Overview</h1>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:12px;color:#94a3b8;" id="wardenName"></span>
+          <button class="refresh-btn" onclick="loadAllData()">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- OVERVIEW -->
+        <div class="tab-section active" id="tab-overview">
+          <div class="stats-row">
+            <div class="stat-card c1"><div class="sc-icon">📈</div><div class="sc-value" id="sv-visits">0</div><div class="sc-label">Page Visits</div><div class="sc-sub">All time</div></div>
+            <div class="stat-card c2"><div class="sc-icon">👩</div><div class="sc-value" id="sv-users">0</div><div class="sc-label">Registrations</div><div class="sc-sub">Women signed up</div></div>
+            <div class="stat-card c3"><div class="sc-icon">🛏️</div><div class="sc-value" id="sv-bookings">0</div><div class="sc-label">Bookings</div><div class="sc-sub">Bed reservations</div></div>
+            <div class="stat-card c4"><div class="sc-icon">📧</div><div class="sc-value" id="sv-enquiries">0</div><div class="sc-label">Enquiries</div><div class="sc-sub">Contact messages</div></div>
+          </div>
+          <div class="dash-grid">
+            <div class="recent-card"><h3>🛏️ Recent Bookings</h3><div id="rc-bookings"><p class="empty-msg">No bookings yet</p></div></div>
+            <div class="recent-card"><h3>👩 Recent Registrations</h3><div id="rc-users"><p class="empty-msg">No registrations yet</p></div></div>
+            <div class="recent-card"><h3>📧 Recent Enquiries</h3><div id="rc-enquiries"><p class="empty-msg">No enquiries yet</p></div></div>
+            <div class="recent-card"><h3>📊 Most Visited Pages</h3><div id="rc-pages"><p class="empty-msg">No visits tracked yet</p></div></div>
+          </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="tab-section" id="tab-bookings">
+          <div class="table-card">
+            <div class="table-header">
+              <h2>🛏️ All Bookings</h2>
+              <div class="tbl-controls"><input class="tbl-search" id="s-bookings" placeholder="Search name, room..."><button class="export-btn" onclick="exportCSV('bookings')">⬇ CSV</button></div>
+            </div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Room</th><th>Bed</th><th>Move-In</th><th>Duration</th><th>Mess Plan</th><th>Guardian</th><th>Guardian Ph.</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="t-bookings"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESIDENTS -->
+        <div class="tab-section" id="tab-users">
+          <div class="table-card">
+            <div class="table-header">
+              <h2>👩 Registered Residents</h2>
+              <div class="tbl-controls"><input class="tbl-search" id="s-users" placeholder="Search name, email..."><button class="export-btn" onclick="exportCSV('users')">⬇ CSV</button></div>
+            </div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Guardian</th><th>Guardian Ph.</th><th>Relation</th><th>Status</th><th>Registered On</th></tr></thead>
+              <tbody id="t-users"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENQUIRIES -->
+        <div class="tab-section" id="tab-enquiries">
+          <div class="table-card">
+            <div class="table-header">
+              <h2>📧 Contact Enquiries</h2>
+              <div class="tbl-controls"><input class="tbl-search" id="s-enquiries" placeholder="Search name, subject..."><button class="export-btn" onclick="exportCSV('enquiries')">⬇ CSV</button></div>
+            </div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="t-enquiries"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISITS -->
+        <div class="tab-section" id="tab-visits">
+          <div class="table-card">
+            <div class="table-header"><h2>📈 Website Visits</h2><button class="export-btn" onclick="exportCSV('visits')">⬇ CSV</button></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Page</th><th>Referrer</th><th>Time</th></tr></thead>
+              <tbody id="t-visits"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGINS -->
+        <div class="tab-section" id="tab-logins">
+          <div class="table-card">
+            <div class="table-header"><h2>🔐 Login Activity</h2><button class="export-btn" onclick="exportCSV('loginActivity')">⬇ CSV</button></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Email</th><th>Action</th><th>Time</th></tr></thead>
+              <tbody id="t-logins"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIREBASE SETUP -->
+        <div class="tab-section" id="tab-firebase">
+          <div class="table-card">
+            <div class="table-header"><h2>🔥 Connect Firebase Database</h2></div>
+            <p style="font-size:13px;color:#475569;margin-bottom:20px;line-height:1.7;">Right now data saves to <b>localStorage</b> — only visible in this browser. Connect Firebase to get a real cloud database visible from any device.</p>
+            <div class="setup-steps">
+              <div class="setup-step"><div class="step-num">1</div><div>Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Add Project → Name it <b>shestay-hostel</b> → Create project</div></div>
+              <div class="setup-step"><div class="step-num">2</div><div>Click the <b>Web icon (&lt;/&gt;)</b> → Register app as <b>shestay-web</b> → Copy the <code>firebaseConfig</code> object shown</div></div>
+              <div class="setup-step"><div class="step-num">3</div><div>Open <b>js/script.js</b> → paste your config values → set: <div class="code-snippet">const FIREBASE_ENABLED = true;</div></div></div>
+              <div class="setup-step"><div class="step-num">4</div><div>Firebase Console → <b>Firestore Database</b> → Create database → Start in test mode → Done</div></div>
+              <div class="setup-step"><div class="step-num">5</div><div>Firebase Console → <b>Authentication</b> → Email/Password → Enable → Add user: <b>warden@shestay.in</b> / <b>Shestay@2026</b></div></div>
+              <div class="setup-step"><div class="step-num">6</div><div>Refresh this page — status badge changes to <b>🔥 Firebase Live</b>. All data now saves to the cloud!</div></div>
+            </div>
+            <div style="background:#dcfce7;border-radius:10px;padding:14px 18px;margin-top:22px;font-size:12px;color:#15803d;line-height:1.7;">✅ After connecting: every booking, registration, enquiry and login saves permanently in the cloud — visible from any browser or device.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_EMAIL = "warden@shestay.in";
+const ADMIN_PASSWORD = "Shestay@2026";
+const DB = { read: name => JSON.parse(localStorage.getItem(name)||"[]").reverse() };
+
+function doLogin() {
+  const email=document.getElementById("adminEmail").value.trim();
+  const pass=document.getElementById("adminPassword").value;
+  const err=document.getElementById("loginErr");
+  if(email===ADMIN_EMAIL&&pass===ADMIN_PASSWORD){ localStorage.setItem("adminSession","true"); localStorage.setItem("adminEmail",email); showDashboard(email); }
+  else err.textContent="❌ Wrong credentials. Use defaults shown below.";
+}
+
+document.getElementById("adminEmail").value=ADMIN_EMAIL;
+document.getElementById("adminPassword").value=ADMIN_PASSWORD;
+document.addEventListener("keydown",e=>{ if(e.key==="Enter"&&document.getElementById("loginScreen").style.display!=="none") doLogin(); });
+if(localStorage.getItem("adminSession")==="true") showDashboard(localStorage.getItem("adminEmail")||ADMIN_EMAIL);
+
+function showDashboard(email) {
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  document.getElementById("wardenName").textContent="👩 "+email;
+  loadAllData();
+}
+function doLogout(){ localStorage.removeItem("adminSession"); location.reload(); }
+
+function loadAllData() {
+  const data={ visits:DB.read("visits"), users:DB.read("users"), bookings:DB.read("bookings"), enquiries:DB.read("enquiries"), loginActivity:DB.read("loginActivity") };
+  document.getElementById("sv-visits").textContent=data.visits.length;
+  document.getElementById("sv-users").textContent=data.users.length;
+  document.getElementById("sv-bookings").textContent=data.bookings.length;
+  document.getElementById("sv-enquiries").textContent=data.enquiries.length;
+  renderBookings(data.bookings); renderUsers(data.users); renderEnquiries(data.enquiries); renderVisits(data.visits); renderLogins(data.loginActivity);
+  renderRecent("rc-bookings",data.bookings,b=>`<div class="ri-name">${b.name||"—"}</div><div class="ri-sub">${b.roomType||"—"} · ${b.moveInDate||"—"}</div>`,b=>badge(b.status||"pending"));
+  renderRecent("rc-users",data.users,u=>`<div class="ri-name">${u.name||"—"}</div><div class="ri-sub">${u.email||"—"}</div>`,u=>badge(u.status||"active"));
+  renderRecent("rc-enquiries",data.enquiries,e=>`<div class="ri-name">${e.name||"—"}</div><div class="ri-sub">${e.subject||"—"}</div>`,e=>badge(e.status||"unread"));
+  const counts={};
+  data.visits.forEach(v=>{ const p=v.page||"unknown"; counts[p]=(counts[p]||0)+1; });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const max=Math.max(...sorted.map(s=>s[1]),1);
+  document.getElementById("rc-pages").innerHTML=sorted.length?`<div class="page-list">${sorted.map(([p,c])=>`<div class="page-row"><div class="page-name">${p}</div><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round((c/max)*100)}%"></div></div><div class="bar-count">${c}</div></div>`).join("")}</div>`:`<p class="empty-msg">Visit a few pages first then refresh.</p>`;
+}
+
+function badge(status){ const map={pending:"b-pending",confirmed:"b-confirmed",unread:"b-unread",read:"b-read",active:"b-active",pending_verification:"b-pv",login:"b-active"}; return `<span class="badge ${map[status]||"b-pending"}">${status||"pending"}</span>`; }
+function noData(cols){ return `<tr class="no-data"><td colspan="${cols}">No records yet. Data appears automatically when users interact with the website.</td></tr>`; }
+function renderRecent(id,data,leftFn,rightFn){ const el=document.getElementById(id); const rows=data.slice(0,4); el.innerHTML=rows.length?rows.map(r=>`<div class="recent-item"><div>${leftFn(r)}</div>${rightFn(r)}</div>`).join(""):`<p class="empty-msg">Nothing yet — interact with the website and refresh.</p>`; }
+
+function renderBookings(data){ const tb=document.getElementById("t-bookings"); tb.innerHTML=data.length?data.map((b,i)=>`<tr><td>${i+1}</td><td><b>${b.name||"—"}</b></td><td style="font-size:11px;">${b.email||"—"}</td><td>${b.phone||"—"}</td><td>${b.roomType||b.room||"—"}</td><td><b>${b.bed||"—"}</b></td><td>${b.moveInDate||"—"}</td><td>${b.duration||"—"}</td><td>${b.messPlan||"No"}</td><td>${b.guardianName||"—"}</td><td>${b.guardianPhone||"—"}</td><td>${badge(b.status||"pending")}</td><td style="font-size:10px;color:#94a3b8;white-space:nowrap;">${b.timestamp||"—"}</td></tr>`).join(""):noData(13); liveSearch("s-bookings","t-bookings"); }
+function renderUsers(data){ const tb=document.getElementById("t-users"); tb.innerHTML=data.length?data.map((u,i)=>`<tr><td>${i+1}</td><td><b>${u.name||"—"}</b></td><td style="font-size:11px;">${u.email||"—"}</td><td>${u.phone||"—"}</td><td>${u.guardianName||"—"}</td><td>${u.guardianPhone||"—"}</td><td>${u.relation||"—"}</td><td>${badge(u.status||"active")}</td><td style="font-size:10px;color:#94a3b8;white-space:nowrap;">${u.timestamp||"—"}</td></tr>`).join(""):noData(9); liveSearch("s-users","t-users"); }
+function renderEnquiries(data){ const tb=document.getElementById("t-enquiries"); tb.innerHTML=data.length?data.map((e,i)=>`<tr><td>${i+1}</td><td><b>${e.name||"—"}</b></td><td style="font-size:11px;">${e.email||"—"}</td><td>${e.phone||"—"}</td><td>${e.subject||"—"}</td><td style="max-width:180px;font-size:11px;">${e.message||"—"}</td><td>${badge(e.status||"unread")}</td><td style="font-size:10px;color:#94a3b8;white-space:nowrap;">${e.timestamp||"—"}</td></tr>`).join(""):noData(8); liveSearch("s-enquiries","t-enquiries"); }
+function renderVisits(data){ const tb=document.getElementById("t-visits"); tb.innerHTML=data.length?data.map((v,i)=>`<tr><td>${i+1}</td><td><b>${v.page||"—"}</b></td><td style="font-size:11px;color:#94a3b8;">${v.referrer||"direct"}</td><td style="font-size:10px;color:#94a3b8;white-space:nowrap;">${v.timestamp||v.time||"—"}</td></tr>`).join(""):noData(4); }
+function renderLogins(data){ const tb=document.getElementById("t-logins"); tb.innerHTML=data.length?data.map((l,i)=>`<tr><td>${i+1}</td><td><b>${l.email||"—"}</b></td><td>${badge(l.action||"login")}</td><td style="font-size:10px;color:#94a3b8;white-space:nowrap;">${l.timestamp||"—"}</td></tr>`).join(""):noData(4); }
+
+function liveSearch(inputId,tbodyId){ const inp=document.getElementById(inputId); if(!inp||inp._bound) return; inp._bound=true; inp.addEventListener("input",()=>{ const q=inp.value.toLowerCase(); document.querySelectorAll(`#${tbodyId} tr`).forEach(tr=>{ tr.style.display=tr.textContent.toLowerCase().includes(q)?"":"none"; }); }); }
+
+const TAB_TITLES={overview:"Overview",bookings:"Bookings",users:"Residents",enquiries:"Enquiries",visits:"Website Visits",logins:"Login Activity",firebase:"🔥 Connect Firebase"};
+function switchTab(el){ document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active")); document.querySelectorAll(".tab-section").forEach(s=>s.classList.remove("active")); el.classList.add("active"); const name=el.dataset.tab; document.getElementById("tab-"+name).classList.add("active"); document.getElementById("pageTitle").textContent=TAB_TITLES[name]||name; }
+
+function exportCSV(name){ const data=DB.read(name); if(!data.length){ alert("No data to export yet."); return; } const keys=Object.keys(data[0]); const csv=[keys.join(","),...data.map(r=>keys.map(k=>`"${String(r[k]||"").replace(/"/g,'""')}"`).join(","))].join("\n"); const a=Object.assign(document.createElement("a"),{href:"data:text/csv;charset=utf-8,"+encodeURIComponent(csv),download:`shestay-${name}-${new Date().toLocaleDateString("en-IN")}.csv`}); a.click(); }
+</script>
+</body>
+</html>
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDBrnfcBlLI9yBq7Ht0vJQo9SQgioJkafM",
+  authDomain:        "shestay-hostel.firebaseapp.com",
+  projectId:         "shestay-hostel",
+  storageBucket:     "shestay-hostel.firebasestorage.app",
+  messagingSenderId: "383576925428",
+  appId:             "1:383576925428:web:7bd92a6b6408bfedc62aa1"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+const ADMIN_EMAIL    = "warden@shestay.in";
+const ADMIN_PASSWORD = "Shestay@2026";
+
+/* Override doLogin to use Firebase Auth */
+window.doLogin = async function() {
+  const email = document.getElementById("adminEmail").value.trim();
+  const pass  = document.getElementById("adminPassword").value;
+  const err   = document.getElementById("loginErr");
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    /* Fallback: check hardcoded credentials */
+    if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
+      localStorage.setItem("adminSession","true");
+      showDashboard(email);
+    } else {
+      err.textContent = "❌ Wrong credentials.";
+    }
+  }
+};
+
+/* Auto-login via Firebase session */
+onAuthStateChanged(auth, user => {
+  if(user) showDashboard(user.email);
+  else if(localStorage.getItem("adminSession")==="true") showDashboard(ADMIN_EMAIL);
+});
+
+/* Override logout */
+window.doLogout = function() {
+  signOut(auth);
+  localStorage.removeItem("adminSession");
+  location.reload();
+};
+
+/* Override loadAllData to use Firestore real-time */
+window.loadAllData = function() {
+  subscribeCollection("visits",       data => { document.getElementById("sv-visits").textContent=data.length; renderVisits(data); renderPageChart(data); });
+  subscribeCollection("users",        data => { document.getElementById("sv-users").textContent=data.length; renderUsers(data); renderRecent("rc-users",data,u=>`<div class="ri-name">${u.name||"—"}</div><div class="ri-sub">${u.email||"—"}</div>`,u=>badge(u.status||"active")); });
+  subscribeCollection("bookings",     data => { document.getElementById("sv-bookings").textContent=data.length; renderBookings(data); renderRecent("rc-bookings",data,b=>`<div class="ri-name">${b.name||"—"}</div><div class="ri-sub">${b.roomType||"—"} · ${b.moveInDate||"—"}</div>`,b=>badge(b.status||"pending")); });
+  subscribeCollection("enquiries",    data => { document.getElementById("sv-enquiries").textContent=data.length; renderEnquiries(data); renderRecent("rc-enquiries",data,e=>`<div class="ri-name">${e.name||"—"}</div><div class="ri-sub">${e.subject||"—"}</div>`,e=>badge(e.status||"unread")); });
+  subscribeCollection("loginActivity",data => { renderLogins(data); });
+  document.getElementById("dbBadge").textContent = "🔥 Firebase Live";
+  document.getElementById("dbBadge").style.background = "#dcfce7";
+  document.getElementById("dbBadge").style.color = "#15803d";
+};
+
+function subscribeCollection(col, callback) {
+  try {
+    const q = query(collection(db, col), orderBy("timestamp","desc"));
+    onSnapshot(q, snap => {
+      const data = snap.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+        timestamp: d.data().timestamp?.toDate?.()?.toLocaleString("en-IN") || "—"
+      }));
+      callback(data);
+    });
+  } catch(e) {
+    /* Fallback to localStorage */
+    callback(JSON.parse(localStorage.getItem(col)||"[]").reverse());
+  }
+}
+
+function renderPageChart(visits) {
+  const counts={};
+  visits.forEach(v=>{ const p=v.page||"unknown"; counts[p]=(counts[p]||0)+1; });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const max=Math.max(...sorted.map(s=>s[1]),1);
+  document.getElementById("rc-pages").innerHTML=sorted.length
+    ?`<div class="page-list">${sorted.map(([p,c])=>`<div class="page-row"><div class="page-name">${p}</div><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round((c/max)*100)}%"></div></div><div class="bar-count">${c}</div></div>`).join("")}</div>`
+    :`<p class="empty-msg">Visit some pages first then refresh.</p>`;
+}
+
+/* Add Firebase badge to topbar */
+document.addEventListener("DOMContentLoaded",()=>{
+  const right = document.querySelector(".topbar > div");
+  if(right){
+    const badge = document.createElement("span");
+    badge.id = "dbBadge";
+    badge.style.cssText = "font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#fef9c3;color:#92400e;";
+    badge.textContent = "⏳ Connecting...";
+    right.prepend(badge);
+  }
+});
+</script>

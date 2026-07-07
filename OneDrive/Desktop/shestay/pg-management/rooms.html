@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rooms | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">She<span>Stay</span> 🌸</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="rooms.html">Rooms</a></li>
+      <li><a href="facilities.html">Facilities</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <section class="rooms-hero">
+    <h1>Find Your Ideal Room</h1>
+    <p>Comfortable, Safe &amp; Affordable Living</p>
+  </section>
+
+  <section class="section" style="padding-bottom:0;">
+    <h1 class="section-title">Available Rooms</h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search room type (e.g. single, double)...">
+    </div>
+  </section>
+
+  <section class="featured-room">
+    <h2>🔥 Most Popular Room</h2>
+    <p>Double Sharing Room with WiFi, Food and CCTV</p>
+  </section>
+
+  <div class="filter-buttons">
+    <button data-filter="all" class="active">All</button>
+    <button data-filter="single">Single</button>
+    <button data-filter="double">Double</button>
+    <button data-filter="triple">Triple</button>
+  </div>
+
+  <section class="section" style="padding-top:0;">
+    <div class="card-container">
+
+      <div class="card room-card" data-room-type="single">
+        <img src="images/room1.jpg" alt="Single sharing room">
+        <div class="card-content">
+          <h3>Single Sharing</h3>
+          <p>Rent: ₹6000/month</p>
+          <p>Available Beds: 2</p>
+          <p>Facilities:</p>
+          <div class="facility-tags">
+            <span>WiFi</span><span>Mess Opt.</span><span>Laundry</span><span>CCTV</span>
+          </div>
+          <div class="room-buttons">
+            <a href="room-details.html?room=single" class="btn">View Details</a>
+            <a href="booking.html?room=single" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+        <span class="available">Available</span>
+        <p class="rating">⭐⭐⭐⭐⭐ 4.8</p>
+      </div>
+
+      <div class="card room-card" data-room-type="double">
+        <img src="images/room2.jpg" alt="Double sharing room">
+        <div class="card-content">
+          <h3>Double Sharing</h3>
+          <p>Rent: ₹4500/month</p>
+          <p>Available Beds: 4</p>
+          <p>Facilities:</p>
+          <div class="facility-tags">
+            <span>WiFi</span><span>Mess Opt.</span><span>Laundry</span><span>CCTV</span>
+          </div>
+          <div class="room-buttons">
+            <a href="room-details.html?room=double" class="btn">View Details</a>
+            <a href="booking.html?room=double" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+        <span class="available">Available</span>
+        <p class="rating">⭐⭐⭐⭐⭐ 4.7</p>
+      </div>
+
+      <div class="card room-card" data-room-type="triple">
+        <img src="images/room3.jpg" alt="Triple sharing room">
+        <div class="card-content">
+          <h3>Triple Sharing</h3>
+          <p>Rent: ₹3500/month</p>
+          <p>Available Beds: 6</p>
+          <p>Facilities:</p>
+          <div class="facility-tags">
+            <span>WiFi</span><span>Mess Opt.</span><span>Laundry</span><span>CCTV</span>
+          </div>
+          <div class="room-buttons">
+            <a href="room-details.html?room=triple" class="btn">View Details</a>
+            <a href="booking.html?room=triple" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+        <span class="available">Available</span>
+        <p class="rating">⭐⭐⭐⭐⭐ 4.5</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer><p>SheStay Girls Hostel &copy; 2026</p></footer>
+  <script type="module" src="js/script.js"></script>
+</body>
+</html>

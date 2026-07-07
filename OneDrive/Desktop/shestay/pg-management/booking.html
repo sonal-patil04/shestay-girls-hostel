@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Room | SheStay Girls Hostel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="booking-page">
+
+  <div class="booking-form-card">
+    <h1>Book Your Room</h1>
+    <p>Secure your comfortable stay today</p>
+
+    <form id="bookingForm">
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="tel" id="phone" placeholder="Phone Number" required>
+
+      <select id="roomType" required>
+        <option value="">Select Room</option>
+        <option>Single Sharing Room</option>
+        <option>Double Sharing Room</option>
+        <option>Triple Sharing Room</option>
+      </select>
+
+      <input type="date" id="moveInDate" required>
+
+      <select id="duration">
+        <option>1 Month</option>
+        <option>3 Months</option>
+        <option>6 Months</option>
+        <option>12 Months</option>
+      </select>
+
+      <button type="submit" class="btn">Book Now</button>
+    </form>
+
+    <p id="successMessage"></p>
+  </div>
+
+  <script type="module" src="js/script.js"></script>
+</body>
+</html>

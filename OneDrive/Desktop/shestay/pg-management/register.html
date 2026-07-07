@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | SheStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <section class="auth-container">
+    <h2>Create Account</h2>
+
+    <form class="auth-form" id="registerForm">
+      <input type="text" id="regName" placeholder="Full Name" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="tel" id="regPhone" placeholder="Phone" required>
+      <input type="password" id="regPassword" placeholder="Password" required>
+      <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+      <p class="error-text" id="registerError"></p>
+      <button type="submit" class="btn">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </section>
+
+  <script type="module" src="js/script.js"></script>
+</body>
+</html>
